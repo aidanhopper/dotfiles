@@ -1,0 +1,23 @@
+#!/bin/bash
+
+apps=(
+	# 'mopidy'
+	'dwmblocks'
+	'picom'
+	#'dropbox'
+)
+
+for app in ${apps[@]}; do
+	pgrep="$(pgrep $app)"
+	if [[ $pgrep == "" ]]; then
+		eval $app &
+	fi
+done
+
+#xautolock -time 15 -locker "slock && systemctl suspend" -detectsleep
+pkill redshift
+redshift &
+feh --no-fehbg --bg-scale -z $HOME/.dotfiles/wallpapers/nord
+setxkbmap -option caps:escape
+#wal -Rq
+while type dwm >/dev/null ; do dwm && continue || break ; done
