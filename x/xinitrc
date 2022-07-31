@@ -17,7 +17,7 @@ done
 #xautolock -time 15 -locker "slock && systemctl suspend" -detectsleep
 pkill redshift
 redshift &
-feh --no-fehbg --bg-scale -z $HOME/.dotfiles/wallpapers/nord
+feh --no-fehbg --bg-scale -z $HOME/.dotfiles/wallpapers
 setxkbmap -option caps:escape
 #wal -Rq
 while type dwm >/dev/null ; do dwm && continue || break ; done

@@ -3,6 +3,7 @@
 
 # Dependencies
 sudo xbps-install -Su
+sudo xbps-install -S firefox
 sudo xbps-install -S font-awesome 
 sudo xbps-install -S nerd-fonts 
 sudo xbps-install -S neovim 
@@ -22,6 +23,7 @@ sudo xbps-install -S libXft-devel
 sudo xbps-install -S libXinerama-devel 
 sudo xbps-install -S freetype-devel 
 sudo xbps-install -S fontconfig-devel
+sudo xbps-install -S fzf
 
 mkdir $HOME/.config
 config="$HOME/.config"
