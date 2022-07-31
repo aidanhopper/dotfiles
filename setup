@@ -11,6 +11,7 @@ sudo xbps-install -S zsh-autosuggestion
 sudo xbps-install -S zsh-syntax-highlighting
 sudo xbps-install -S redshift
 sudo xbps-install -S curl
+sudo xbps-install -S base-devel
 
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 chmod +x install.sh
