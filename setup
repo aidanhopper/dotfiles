@@ -1,5 +1,9 @@
 #!/bin/sh
 
+config="$HOME/.config"
+dotfiles="$HOME/dotfiles"
+
+# Dependencies
 sudo xbps-install -Su
 sudo xbps-install -S font-awesome 
 sudo xbps-install -S nerd-fonts 
@@ -21,18 +25,20 @@ sudo xbps-install -S libXinerama-devel
 sudo xbps-install -S freetype-devel 
 sudo xbps-install -S fontconfig-devel
 
+# ZSH
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 git clone https://github.com/reobin/typewritten.git $HOME/.oh-my-zsh/themes/typewritten
+ln -s "$ZSH_CUSTOM/themes/typewritten/typewritten.zsh-theme" "$ZSH_CUSTOM/themes/typewritten.zsh-theme"
+ln -s "$ZSH_CUSTOM/themes/typewritten/async.zsh" "$ZSH_CUSTOM/themes/async"
 rm $HOME/.zshrc
+ln -s "$dotfiles/zshrc" "$HOME/.zshrc"
 
+# removing bash
 rm $HOME/.zshrc
 rm $HOME/.bash_history
 rm $HOME/.bash_logout
 rm $HOME/.bash_profile
 rm $HOME/.bashrc
-
-config="$HOME/.config"
-dotfiles="$HOME/dotfiles"
 
 mkdir $HOME/.config
 
@@ -41,7 +47,6 @@ ln -s "$dotfiles/tmux" "$config/tmux"
 ln -s "$dotfiles/picom" "$config/picom"
 ln -s "$dotfiles/kitty" "$config/kitty"
 ln -s "$dotfiles/redshift" "$config/redshift"
-ln -s "$dotfiles/zshrc" "$HOME/.zshrc"
 ln -s "$dotfiles/xinitrc" "$HOME/.xinitrc"
 
 cd dwm
