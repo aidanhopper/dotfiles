@@ -31,4 +31,12 @@ ln -s "$dotfiles/tmux" "$config/tmux"
 ln -s "$dotfiles/picom" "$config/picom"
 ln -s "$dotfiles/kitty" "$config/kitty"
 ln -s "$dotfiles/redshift" "$config/redshift"
-ln -s "$dotfiles/zsh/zshrc" "$HOME/.zshrc"
+ln -s "$dotfiles/zshrc" "$HOME/.zshrc"
+ln -s "$dotfiles/xinitrc" "$HOME/.xinitrc"
+
+cd dwm
+sudo make install
+
+cd ../dwmblocks
+sudo make install
+
