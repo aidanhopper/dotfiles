@@ -1,6 +1,6 @@
 #!/bin/sh
 
-sudo xbps-install -S font-awesome nerd-fonts neovim tmux kitty zsh zsh-completions zsh-autosuggestion zsh-syntax-highlighting redshift curl base-devel xorg glibc
+sudo xbps-install -S font-awesome nerd-fonts neovim tmux kitty zsh zsh-completions zsh-autosuggestion zsh-syntax-highlighting redshift curl base-devel xorg feh libX11-devel libXft-devel libXinerama-devel freetype-devel fontconfig-devel
 
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 chmod +x install.sh
