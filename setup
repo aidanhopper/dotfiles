@@ -2,7 +2,7 @@
 
 sudo xbps-install -S font-awesome
 sudo xbps-install -S nerd-fonts
-sudo xbps-install -S nvim
+sudo xbps-install -S neovim
 sudo xbps-install -S tmux
 sudo xbps-install -S kitty
 sudo xbps-install -S zsh
@@ -14,9 +14,11 @@ sudo xbps-install -S redshift
 config="$HOME/.config"
 dotfiles="$HOME/dotfiles"
 
+mkdir $HOME/.config
+
 ln -s "$dotfiles/nvim" "$config/nvim"
 ln -s "$dotfiles/tmux" "$config/tmux"
 ln -s "$dotfiles/picom" "$config/picom"
 ln -s "$dotfiles/kitty" "$config/kitty"
 ln -s "$dotfiles/redshift" "$config/redshift"
-ln -s "$dotfiles/zsh/zshrc" "$HOME/zsh"
+ln -s "$dotfiles/zsh/zshrc" "$HOME/.zshrc"
