@@ -1,0 +1,9 @@
+[submodule "nvim"]
+	path = nvim
+	url = ./nvim
+[submodule "dwm"]
+	path = dwm
+	url = ./dwm
+[submodule "dwmblocks"]
+	path = dwmblocks
+	url = ./dwmblocks
