@@ -1,7 +1,5 @@
 #!/bin/sh
 
-config="$HOME/.config"
-dotfiles="$HOME/dotfiles"
 
 # Dependencies
 sudo xbps-install -Su
@@ -25,6 +23,10 @@ sudo xbps-install -S libXinerama-devel
 sudo xbps-install -S freetype-devel 
 sudo xbps-install -S fontconfig-devel
 
+mkdir $HOME/.config
+config="$HOME/.config"
+dotfiles="$HOME/dotfiles"
+
 # ZSH
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 git clone https://github.com/reobin/typewritten.git $HOME/.oh-my-zsh/themes/typewritten
@@ -40,9 +42,12 @@ rm $HOME/.bash_logout
 rm $HOME/.bash_profile
 rm $HOME/.bashrc
 
-mkdir $HOME/.config
-
+# neovim
+git clone --depth 1 https://github.com/wbthomason/packer.nvim\
+ ~/.local/share/nvim/site/pack/packer/start/packer.nvim
 ln -s "$dotfiles/nvim" "$config/nvim"
+
+
 ln -s "$dotfiles/tmux" "$config/tmux"
 ln -s "$dotfiles/picom" "$config/picom"
 ln -s "$dotfiles/kitty" "$config/kitty"
