@@ -15,6 +15,11 @@ sudo xbps-install -S curl
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 chmod +x install.sh
 ./install.sh
+rm $HOME/.zshrc
+rm $HOME/.bash_history
+rm $HOME/.bash_logout
+rm $HOME/.bash_profile
+rm $HOME/.bashrc
 
 config="$HOME/.config"
 dotfiles="$HOME/dotfiles"
