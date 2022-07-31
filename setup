@@ -10,6 +10,11 @@ sudo xbps-install -S zsh-completions
 sudo xbps-install -S zsh-autosuggestion
 sudo xbps-install -S zsh-syntax-highlighting
 sudo xbps-install -S redshift
+sudo xbps-install -S curl
+
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+chmod +x install.sh
+./install.sh
 
 config="$HOME/.config"
 dotfiles="$HOME/dotfiles"
