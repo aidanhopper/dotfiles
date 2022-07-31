@@ -42,13 +42,16 @@ rm $HOME/.bash_logout
 rm $HOME/.bash_profile
 rm $HOME/.bashrc
 
+# tmux
+ln -s "$dotfiles/tmux" "$config/tmux"
+git clone https://github.com/tmux-plugins/tpm $config/tmux/plugins/tpm
+
 # neovim
 git clone --depth 1 https://github.com/wbthomason/packer.nvim\
  ~/.local/share/nvim/site/pack/packer/start/packer.nvim
 ln -s "$dotfiles/nvim" "$config/nvim"
+nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
 
-
-ln -s "$dotfiles/tmux" "$config/tmux"
 ln -s "$dotfiles/picom" "$config/picom"
 ln -s "$dotfiles/kitty" "$config/kitty"
 ln -s "$dotfiles/redshift" "$config/redshift"
