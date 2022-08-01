@@ -3,7 +3,10 @@
 apps=(
 	# 'mopidy'
 	'dwmblocks'
-	'picom'
+	'$HOME/.local/bin/picom/build/src/picom'
+  # 'pulseaudio'
+  'pipewire'
+  'pipewire-pulse'
 	#'dropbox'
 )
 
@@ -20,4 +23,5 @@ redshift &
 feh --no-fehbg --bg-scale -z $HOME/dotfiles/wallpapers
 setxkbmap -option caps:escape
 #wal -Rq
-while type dwm >/dev/null ; do dwm && continue || break ; done
+# exec dbus-launch --exit-with-session dwm
+while type dwm >/dev/null ; do dbus-launch --exit-with-session dwm && continue || break ; done

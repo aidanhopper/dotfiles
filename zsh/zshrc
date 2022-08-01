@@ -1,7 +1,7 @@
-export PATH=$HOME/bin:/usr/local/bin:$PATH
+export PATH=$HOME/bin:/usr/local/bin:$HOME/.local/share/flatpak/exports/bin:$PATH
 EDITOR="nvim"
 export ZSH="/home/aidan/dotfiles/zsh/oh-my-zsh"
-ZSH_THEME="typewritten"
+ZSH_THEME="robbyrussell"
 # Uncomment the following line to enable command auto-correction.
 ENABLE_CORRECTION="false"
 
@@ -64,6 +64,7 @@ slocksuspend () {
 	systemctl suspend
 	slock
 }
+# export XDG_RUNTIME_DIR=/run/user/$(id -u aidan)
 alias spending=slocksuspend
 alias sus=slocksuspend
 source /home/aidan/dotfiles/zsh/oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh

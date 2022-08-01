@@ -11,7 +11,7 @@ sudo xbps-install -S tmux
 sudo xbps-install -S kitty 
 sudo xbps-install -S zsh  
 sudo xbps-install -S zsh-completions 
-sudo xbps-install -S zsh-autosuggestion 
+sudo xbps-install -S zsh-autosuggestions
 sudo xbps-install -S zsh-syntax-highlighting 
 sudo xbps-install -S redshift 
 sudo xbps-install -S curl 
@@ -30,7 +30,11 @@ config="$HOME/.config"
 dotfiles="$HOME/dotfiles"
 
 # ZSH
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+rm $HOME/.zshrc
 ln -s "$dotfiles/zsh/zshrc" "$HOME/.zshrc"
+ln -s "/usr/share/zsh/plugins/zsh-autosuggestions" "$HOME/dotfiles/zsh/oh-my-zsh/custom/plugins/zsh-autosuggestions"
+ln -s "/usr/share/zsh/plugins/zsh-syntax-highlighting" "$HOME/dotfiles/zsh/oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
 
 # removing bash
 rm $HOME/.zshrc
