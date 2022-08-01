@@ -12,4 +12,4 @@ Dependencies:
 - fonts
 - zsh
 - xorg meta package
-
+- stow

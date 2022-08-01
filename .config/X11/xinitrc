@@ -3,7 +3,7 @@
 apps=(
 	# 'mopidy'
 	'dwmblocks'
-	'$HOME/.local/bin/picom/build/src/picom'
+	'$HOME/.local/share/picom/build/src/picom'
   # 'pulseaudio'
   'pipewire'
   'pipewire-pulse'
@@ -17,11 +17,8 @@ for app in ${apps[@]}; do
 	fi
 done
 
-#xautolock -time 15 -locker "slock && systemctl suspend" -detectsleep
 pkill redshift
 redshift &
-feh --no-fehbg --bg-scale -z $HOME/dotfiles/wallpapers
+feh --no-fehbg --bg-fill -z $HOME/Pictures/nord
 setxkbmap -option caps:escape
-#wal -Rq
-# exec dbus-launch --exit-with-session dwm
 while type dwm >/dev/null ; do dbus-launch --exit-with-session dwm && continue || break ; done
