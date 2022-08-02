@@ -10,3 +10,9 @@
 [submodule ".config/nvim"]
 	path = .config/nvim
 	url = https://github.com/aidanhopper/nvim
+[submodule "st"]
+	path = st
+	url = https://github.com/aidanhopper/st
+[submodule ".local/share/st"]
+	path = .local/share/st
+	url = https://github.com/aidanhopper/st
