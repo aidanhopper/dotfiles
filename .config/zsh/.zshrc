@@ -45,4 +45,10 @@ alias spending=slocksuspend
 alias sus=slocksuspend
 alias nvidia-settings="nvidia-settings --config='$XDG_CONFIG_HOME/nvidia/settings'"
 alias x="startx $XINITRC"
+alias cat=bat
+
+# package manager aliases
+alias xq=xbps-query
+alias xi="sudo xbps-install"
+alias xr="sudo xbps-remove"
 cd

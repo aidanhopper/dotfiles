@@ -3,11 +3,8 @@
 apps=(
 	# 'mopidy'
 	'dwmblocks'
-	'$HOME/.local/share/picom/build/src/picom'
-  # 'pulseaudio'
-  'pipewire'
-  'pipewire-pulse'
-	#'dropbox'
+  'picom'
+	# 'dropbox'
 )
 
 for app in ${apps[@]}; do
