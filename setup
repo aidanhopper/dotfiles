@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 setup_packages() {
   # gets name of distro
@@ -6,9 +6,10 @@ setup_packages() {
   # gets install command from distro and distro specific package names
   case "$DISTRO" in
     "void") 
-      sudo xbps-install -Su
+      sudo xbps-install -Syu
+      INSTALL_CMD="sudo xbps-install -y"
       # packages to install
-      PACKAGES=
+      PACKAGES=(
         "firefox"
         "font-awesome"
         "nerd-fonts"
@@ -27,13 +28,15 @@ setup_packages() {
         "libXinerama-devel"
         "freetype-devel"
         "fontconfig-devel"
+        "harfbuzz-devel"
         "fzf"
         "bat"
-      INSTALL_CMD="sudo xbps-install -S"
-      ;;
+        "stow"
+      )
+    ;;
     "arch") 
       INSTALL_CMD="sudo pacman -S"
-      ;;
+    ;;
   esac
   for PACKAGE in ${PACKAGES[@]}; do
     eval "$INSTALL_CMD $PACKAGE" 
@@ -42,21 +45,30 @@ setup_packages() {
 
 setup_directories() {
   # makes the XDG dirs
-  mkdir $HOME/.config
-  mkdir $HOME/.local
-  mkdir $HOME/.cache
+  if [ -L "$HOME/.config" ]; then
+    mkdir $HOME/.config
+  fi
+  if [ -L "$HOME/.local" ]; then
+    mkdir $HOME/.local
+  fi
+  if [ -L "$HOME/.cache" ]; then
+    mkdir $HOME/.cache
+  fi
   # make other home dirs
-  mkdir $HOME/Pictures
-  mkdir $HOME/Downloads
+  if [ -L "$HOME/Pictures" ]; then
+    mkdir $HOME/Pictures
+  fi
+  if [ -L "$HOME/Downloads" ]; then
+    mkdir $HOME/Downloads
+  fi
   # creating symlinks
-  stow  $HOME/.dotfiles
+  stow . 
 }
 
 setup_programs() {
   # ZSH
-  sudo echo "export ZDOTDIR='$HOME/.config/zsh'" >> /etc/zsh/zshenv
-  sudo chsh -s /usr/bin/zsh
-  source $HOME/.config/zsh/.zshrc 
+  chsh -s /usr/bin/zsh
+  source $HOME/.zshrc 
   # removing bash
   rm $HOME/.bash_history
   rm $HOME/.bash_logout
@@ -65,17 +77,16 @@ setup_programs() {
   # tmux
   sudo git clone https://github.com/tmux-plugins/tpm $HOME/.config/tmux/plugins/tpm
   # neovim
-  git clone --depth 1 https://github.com/wbthomason/packer.nvim\
-   $HOME/.local/share/nvim/site/pack/packer/start/packer.nvim
+  git clone --depth 1 https://github.com/wbthomason/packer.nvim $HOME/.local/share/nvim/site/pack/packer/start/packer.nvim
   nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
   # compiling suckless programs
-  cd .local/share/dwm
+  cd $HOME/.local/share/dwm
   sudo make clean install
-  cd ../dwmblocks
+  cd $HOME/.local/dwmblocks
   sudo make clean install
-  cd ../dmenu
+  cd $HOME/.local/dmenu
   sudo make clean install
-  cd  ../st
+  cd  $HOME/.local/st
   sudo make clean install
 }
 
