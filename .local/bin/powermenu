@@ -1,0 +1,19 @@
+#!/bin/sh
+
+choise="$(echo 'logout\nsuspend\nshutdown' | dmenu)"
+case "$choise" in
+  "logout") cmd="pkill dwm"
+  ;;
+  "suspend") cmd="loginctl suspend"
+  ;;
+  "shutdown") cmd="loginctl poweroff"
+  ;;
+esac
+
+yayornay="$(echo 'yes\nno' | dmenu)"
+
+case "$yayornay" in
+  "yes") eval $cmd
+  ;;
+esac
+

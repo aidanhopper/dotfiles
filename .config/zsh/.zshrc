@@ -12,15 +12,19 @@ plugins=(
 # Useful functions
 fcd () cd "$(find $HOME -type d | fzf --preview 'tree {}')"
 
+# Term enviroment var
+export TERMINAL=st
 
 # Setting XDG environment vars
 export XDG_STATE_HOME=$HOME/.cache
 export XDG_DATA_HOME=$HOME/.local/share
 export XDG_CACHE_HOME=$HOME/.cache
 export XDG_CONFIG_HOME=$HOME/.config
+
 # Setting PATH vars 
 export PATH=/usr/local/bin:$PATH
 export PATH=$HOME/.local/bin:$PATH
+# export PATH=$HOME/.dotfiles/.local/bin/statusbar:$PATH
 
 # Setting app specfic paths
 export HISTFILE=$XDG_STATE_HOME/zsh/history

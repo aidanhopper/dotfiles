@@ -1,0 +1,9 @@
+#!/bin/sh 
+
+case "$BUTTON" in 
+  6) st -e nvim "$0" ;;
+esac
+
+
+MEMORY="$(free -h | awk '/^Mem/ { print $3"/"$2 }' | sed s/i//g)"
+echo "[ Mem : $MEMORY ]"

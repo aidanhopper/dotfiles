@@ -2,8 +2,9 @@
 
 apps=(
 	# 'mopidy'
-	'dwmblocks'
   'picom'
+  'pipewire'
+  'pipewire-pulse'
 	# 'dropbox'
 )
 
@@ -18,4 +19,6 @@ pkill redshift
 redshift &
 feh --no-fehbg --bg-fill -z $HOME/Pictures/nord
 setxkbmap -option caps:escape
+xrdb ~/.Xresources 
+dwmblocks &
 while type dwm >/dev/null ; do dbus-launch --exit-with-session dwm && continue || break ; done

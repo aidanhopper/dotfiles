@@ -1,2 +1,0 @@
-#!/bin/sh
-cd "$(find $HOME -type d | fzf --preview 'tree {}')"
