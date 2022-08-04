@@ -1,4 +1,3 @@
-EDITOR="nvim"
 ZSH_THEME="robbyrussell"
 # Uncomment the following line to enable command auto-correction.
 ENABLE_CORRECTION="false"
@@ -13,7 +12,8 @@ plugins=(
 fcd () cd "$(find $HOME -type d | fzf --preview 'tree {}')"
 
 # Term enviroment var
-export TERMINAL=st
+TERMINAL=st
+EDITOR=nvim
 
 # Setting XDG environment vars
 export XDG_STATE_HOME=$HOME/.cache
@@ -48,7 +48,7 @@ alias fzf="fzf --color bg:-1"
 alias spending=slocksuspend
 alias sus=slocksuspend
 alias nvidia-settings="nvidia-settings --config='$XDG_CONFIG_HOME/nvidia/settings'"
-alias x="startx $XINITRC"
+alias x=startx
 alias cat=bat
 
 # package manager aliases

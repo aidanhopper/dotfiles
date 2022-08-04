@@ -66,6 +66,8 @@ setup_directories() {
 }
 
 setup_programs() {
+  # enabling scripts
+  chmod +x $HOME/.local/bin/*
   # ZSH
   chsh -s /usr/bin/zsh
   source $HOME/.zshrc 
