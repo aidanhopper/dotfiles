@@ -1,14 +1,12 @@
-Assumes you are installing on void linux
+## Assumes you are installing on void linux
 
-Dependencies:
+#### Dependencies:
 
 - git
-- kitty
 - picom 
 - redshift
 - tmux
 - nvim 
-  - packer (will need to be manually installed)
 - fonts
 - zsh
 - xorg meta package
