@@ -1,66 +1,88 @@
 #!/bin/sh
 
+setup_packages() {
+  # gets name of distro
+  DISTRO="$(cat /etc/os-release | grep ^DISTRIB_ID | sed s/DISTRIB_ID=//g | sed s/\"//g)"
+  # gets install command from distro and distro specific package names
+  case "$DISTRO" in
+    "void") 
+      sudo xbps-install -Su
+      # packages to install
+      PACKAGES=
+        "firefox"
+        "font-awesome"
+        "nerd-fonts"
+        "neovim"
+        "tmux"
+        "zsh"
+        "zsh-autosuggestions"
+        "zsh-syntax-highlighting"
+        "redshift"
+        "curl"
+        "base-devel"
+        "xorg"
+        "feh"
+        "libX11-devel"
+        "libXft-devel"
+        "libXinerama-devel"
+        "freetype-devel"
+        "fontconfig-devel"
+        "fzf"
+        "bat"
+      INSTALL_CMD="sudo xbps-install -S"
+      ;;
+    "arch") 
+      INSTALL_CMD="sudo pacman -S"
+      ;;
+  esac
+  for PACKAGE in ${PACKAGES[@]}; do
+    eval "$INSTALL_CMD $PACKAGE" 
+  done
+}
 
-# Dependencies
-sudo xbps-install -Su
-sudo xbps-install -S firefox
-sudo xbps-install -S font-awesome 
-sudo xbps-install -S nerd-fonts 
-sudo xbps-install -S neovim 
-sudo xbps-install -S tmux 
-sudo xbps-install -S kitty 
-sudo xbps-install -S zsh  
-sudo xbps-install -S zsh-completions 
-sudo xbps-install -S zsh-autosuggestions
-sudo xbps-install -S zsh-syntax-highlighting 
-sudo xbps-install -S redshift 
-sudo xbps-install -S curl 
-sudo xbps-install -S base-devel 
-sudo xbps-install -S xorg 
-sudo xbps-install -S feh 
-sudo xbps-install -S libX11-devel 
-sudo xbps-install -S libXft-devel 
-sudo xbps-install -S libXinerama-devel 
-sudo xbps-install -S freetype-devel 
-sudo xbps-install -S fontconfig-devel
-sudo xbps-install -S fzf
+setup_directories() {
+  # makes the XDG dirs
+  mkdir $HOME/.config
+  mkdir $HOME/.local
+  mkdir $HOME/.cache
+  # make other home dirs
+  mkdir $HOME/Pictures
+  mkdir $HOME/Downloads
+  # creating symlinks
+  stow  $HOME/.dotfiles
+}
 
-mkdir $HOME/.config
-config="$HOME/.config"
-dotfiles="$HOME/dotfiles"
+setup_programs() {
+  # ZSH
+  sudo echo "export ZDOTDIR='$HOME/.config/zsh'" >> /etc/zsh/zshenv
+  sudo chsh -s /usr/bin/zsh
+  source $HOME/.config/zsh/.zshrc 
+  # removing bash
+  rm $HOME/.bash_history
+  rm $HOME/.bash_logout
+  rm $HOME/.bash_profile
+  rm $HOME/.bashrc
+  # tmux
+  sudo git clone https://github.com/tmux-plugins/tpm $HOME/.config/tmux/plugins/tpm
+  # neovim
+  git clone --depth 1 https://github.com/wbthomason/packer.nvim\
+   $HOME/.local/share/nvim/site/pack/packer/start/packer.nvim
+  nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
+  # compiling suckless programs
+  cd .local/share/dwm
+  sudo make clean install
+  cd ../dwmblocks
+  sudo make clean install
+  cd ../dmenu
+  sudo make clean install
+  cd  ../st
+  sudo make clean install
+}
 
-# ZSH
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-rm $HOME/.zshrc
-ln -s "$dotfiles/zsh/zshrc" "$HOME/.zshrc"
-ln -s "/usr/share/zsh/plugins/zsh-autosuggestions" "$HOME/dotfiles/zsh/oh-my-zsh/custom/plugins/zsh-autosuggestions"
-ln -s "/usr/share/zsh/plugins/zsh-syntax-highlighting" "$HOME/dotfiles/zsh/oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
+setup() {
+  setup_packages
+  setup_directories
+  setup_programs
+}
 
-# removing bash
-rm $HOME/.zshrc
-rm $HOME/.bash_history
-rm $HOME/.bash_logout
-rm $HOME/.bash_profile
-rm $HOME/.bashrc
-
-# tmux
-ln -s "$dotfiles/tmux" "$config/tmux"
-sudo git clone https://github.com/tmux-plugins/tpm $config/tmux/plugins/tpm
-
-# neovim
-git clone --depth 1 https://github.com/wbthomason/packer.nvim\
- ~/.local/share/nvim/site/pack/packer/start/packer.nvim
-ln -s "$dotfiles/nvim" "$config/nvim"
-nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
-
-ln -s "$dotfiles/picom" "$config/picom"
-ln -s "$dotfiles/kitty" "$config/kitty"
-ln -s "$dotfiles/redshift" "$config/redshift"
-ln -s "$dotfiles/x/xinitrc" "$HOME/.xinitrc"
-
-cd dwm
-sudo make install
-
-cd ../dwmblocks
-sudo make install
-
+setup
