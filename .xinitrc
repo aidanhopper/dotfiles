@@ -5,7 +5,7 @@ redshift &
 feh --no-fehbg --bg-fill -z $HOME/Pictures/nord
 setxkbmap -option caps:escape
 xrdb ~/.Xresources 
-picom &
+picom --experimental-backends &
 pipewire &
 pipewire-pulse &
 dwmblocks &
