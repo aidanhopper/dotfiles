@@ -16,8 +16,6 @@ setup_packages() {
         "neovim"
         "tmux"
         "zsh"
-        "zsh-autosuggestions"
-        "zsh-syntax-highlighting"
         "redshift"
         "curl"
         "base-devel"
@@ -90,6 +88,8 @@ setup_programs() {
   sudo make clean install
   cd  $HOME/.local/share/st
   sudo make clean install
+  # loading xresources
+  xrdb $HOME/.Xresources
 }
 
 setup() {

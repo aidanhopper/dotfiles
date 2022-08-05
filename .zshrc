@@ -1,12 +1,7 @@
-ZSH_THEME="robbyrussell"
 # Uncomment the following line to enable command auto-correction.
 ENABLE_CORRECTION="false"
 
-plugins=(
-    git
-    zsh-autosuggestions
-	colored-man-pages
-)
+
 
 # Useful functions
 fcd () cd "$(find $HOME -type d | fzf --preview 'tree {}')"
@@ -14,7 +9,6 @@ fcd () cd "$(find $HOME -type d | fzf --preview 'tree {}')"
 # Term enviroment var
 TERMINAL=st
 EDITOR=nvim
-
 # Setting XDG environment vars
 export XDG_STATE_HOME=$HOME/.cache
 export XDG_DATA_HOME=$HOME/.local/share
@@ -30,15 +24,18 @@ export PATH=$HOME/.local/bin:$PATH
 export HISTFILE=$XDG_STATE_HOME/zsh/history
 export XINITRC=$XDG_CONFIG_HOME/X11/xinitrc
 export XAUTHORITY=$XDG_RUNTIME_DIR/Xauthority
-export ZSH=$XDG_DATA_HOME/oh-my-zsh
 export INPUTRC=$XDG_CONFIG_HOME/readline/inputrc
 export LESSHISTFILE=$XDG_CACHE_HOME/less/history
 export CUDA_CACHE_PATH=$XDG_CACHE_HOME/nv
 
-# ZSH sources
-source $ZSH/oh-my-zsh.sh
-source $ZSH/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source $ZSH/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+# ZSH plugins and theme
+source $XDG_CONFIG_HOME/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+source $XDG_CONFIG_HOME/zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fpath+=$XDG_CONFIG_HOME/zsh/typewritten
+autoload -U promptinit; promptinit
+autoload -U compinit; compinit
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+prompt typewritten
 
 # aliases
 alias w=setbg
@@ -50,6 +47,7 @@ alias sus=slocksuspend
 alias nvidia-settings="nvidia-settings --config='$XDG_CONFIG_HOME/nvidia/settings'"
 alias x=startx
 alias cat=bat
+alias ls="ls --color"
 
 # package manager aliases
 alias xq=xbps-query

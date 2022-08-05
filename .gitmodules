@@ -16,3 +16,15 @@
 [submodule ".local/share/st"]
 	path = .local/share/st
 	url = https://github.com/aidanhopper/st
+[submodule ".config/zsh/typewritten"]
+	path = .config/zsh/typewritten
+	url = https://github.com/reobin/typewritten
+[submodule ".local/share/picom"]
+	path = .local/share/picom
+	url = https://github.com/ibhagwan/picom
+[submodule ".config/zsh/zsh-syntax-highlighting"]
+	path = .config/zsh/zsh-syntax-highlighting
+	url = https://github.com/zsh-users/zsh-syntax-highlighting
+[submodule ".config/zsh/zsh-autosuggestions"]
+	path = .config/zsh/zsh-autosuggestions
+	url = https://github.com/zsh-users/zsh-autosuggestions
