@@ -114,6 +114,7 @@ setup() {
   setup_packages
   setup_directories
   setup_programs
+  pkill -KILL -u $(whoami)
 }
 
 setup
