@@ -1,0 +1,117 @@
+#!/bin/bash
+
+setup_packages() {
+  # gets name of distro
+  DISTRO="$(cat /etc/os-release | grep ^DISTRIB_ID | sed s/DISTRIB_ID=//g | sed s/\"//g)"
+  # gets install command from distro and distro specific package names
+  case "$DISTRO" in
+    "void") 
+      sudo xbps-install -Syu
+      INSTALL_CMD="sudo xbps-install -y"
+      # packages to install
+      PACKAGES=(
+        "firefox"
+        "font-awesome"
+        "nerd-fonts"
+        "neovim"
+        "tmux"
+        "zsh"
+        "redshift"
+        "curl"
+        "base-devel"
+        "xorg-minimal"
+        "feh"
+        "libX11-devel"
+        "libXft-devel"
+        "libXinerama-devel"
+        "freetype-devel"
+        "fontconfig-devel"
+        "harfbuzz-devel"
+        "fzf"
+        "bat"
+        "stow"
+        "meson"
+        "cmake"
+        "libev-devel"
+        "xcb-util-renderutil-devel"
+        "xcb-util-image-devel"
+        "uthash"
+        "libconfig-devel"
+        "elogind"
+        "dbus"
+        "pipewire"
+        "pulsemixer"
+      )
+    ;;
+    "arch") 
+      INSTALL_CMD="sudo pacman -S"
+    ;;
+  esac
+  for PACKAGE in ${PACKAGES[@]}; do
+    eval "$INSTALL_CMD $PACKAGE" 
+  done
+}
+
+setup_directories() {
+  # makes the XDG dirs
+  if [ -L "$HOME/.config" ]; then
+    mkdir $HOME/.config
+  fi
+  if [ -L "$HOME/.local" ]; then
+    mkdir $HOME/.local
+  fi
+  if [ -L "$HOME/.cache" ]; then
+    mkdir $HOME/.cache
+  fi
+  # make other home dirs
+  if [ -L "$HOME/Pictures" ]; then
+    mkdir $HOME/Pictures
+  fi
+  if [ -L "$HOME/Downloads" ]; then
+    mkdir $HOME/Downloads
+  fi
+  # creating symlinks
+  sudo stow . 
+}
+
+setup_programs() {
+  # enabling scripts
+  chmod +x $HOME/.local/bin/*
+  # ZSH
+  chsh -s /usr/bin/zsh
+  source $HOME/.zshrc 
+  # removing bash
+  rm $HOME/.bash_history
+  rm $HOME/.bash_logout
+  rm $HOME/.bash_profile
+  rm $HOME/.bashrc
+  # neovim
+ git clone --depth 1 https://github.com/wbthomason/packer.nvim $HOME/.local/share/nvim/site/pack/packer/start/packer.nvim
+  nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
+  # picom
+  cd $HOME/.local/share/picom
+  meson --buildtype=release .
+  ninja -C build
+  sudo mv $HOME/.local/share/picom/build/src/picom /usr/bin
+  cd $HOME/.dotfiles
+  # compiling suckless programs
+  cd $HOME/.local/share/dwm
+  sudo make clean install
+  cd $HOME/.local/share/dwmblocks
+  sudo make clean install
+  cd $HOME/.local/share/dmenu
+  sudo make clean install
+  cd  $HOME/.local/share/st
+  sudo make clean install
+  # loading xresources
+  xrdb $HOME/.Xresources
+  sudo logout
+}
+
+setup() {
+  setup_packages
+  setup_directories
+  setup_programs
+}
+
+setup
