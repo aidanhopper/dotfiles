@@ -7,8 +7,7 @@ setup_packages() {
   case "$DISTRO" in
     "void") 
       sudo xbps-install -Syu
-      INSTALL_CMD="sudo xbps-install -y"
-      # packages to install
+      INSTALL_CMD="sudo xbps-install -y" # packages to install
       PACKAGES=(
         "firefox"
         "font-awesome"
@@ -19,7 +18,7 @@ setup_packages() {
         "redshift"
         "curl"
         "base-devel"
-        "xorg"
+        "xorg-minimal"
         "feh"
         "libX11-devel"
         "libXft-devel"
@@ -37,6 +36,13 @@ setup_packages() {
         "xcb-util-image-devel"
         "uthash"
         "libconfig-devel"
+        "elogind"
+        "dbus"
+        # "pam-libs"
+        # "dbus-elogind"
+        # "elogind-devel"
+        "pipewire"
+        "pulsemixer"
       )
     ;;
     "arch") 
@@ -66,28 +72,18 @@ setup_directories() {
   if [ -L "$HOME/Downloads" ]; then
     mkdir $HOME/Downloads
   fi
-  # creating symlinks
-  sudo stow . 
-}
-
-setup_programs() {
-  # enabling scripts
-  chmod +x $HOME/.local/bin/*
-  # ZSH
-  chsh -s /usr/bin/zsh
-  source $HOME/.zshrc 
-  # removing bash
-  rm $HOME/.bash_history
-  rm $HOME/.bash_logout
+  # making nvim path so that nvim does create new folders in dotfiles
+  mkdir $HOME/.local/share/nvim/site/pack/packer/start
   rm $HOME/.bash_profile
   rm $HOME/.bashrc
   # neovim
- git clone --depth 1 https://github.com/wbthomason/packer.nvim $HOME/.local/share/nvim/site/pack/packer/start/packer.nvim
   nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
   # picom
   meson --buildtype=release $HOME/.local/share/picom
   ninja -C $HOME/.local/share/picom/build
   sudo mv $HOME/.local/share/picom/build/src/picom /usr/bin
+  # pipewire
+  sudo ln -s /etc/sv/dbus /var/service
   # compiling suckless programs
   cd $HOME/.local/share/dwm
   sudo make clean install
@@ -99,7 +95,7 @@ setup_programs() {
   sudo make clean install
   # loading xresources
   xrdb $HOME/.Xresources
-  zsh
+  exit
 }
 
 setup() {
