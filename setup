@@ -93,9 +93,11 @@ setup_programs() {
   # neovim
   nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
   # picom
-  meson --buildtype=release $HOME/.local/share/picom
-  ninja -C $HOME/.local/share/picom/build
+  cd $HOME/.local/share/picom
+  meson --buildtype=release . 
+  ninja -C build
   sudo mv $HOME/.local/share/picom/build/src/picom /usr/bin
+  cd $HOME/.dotfiles
   # pipewire
   sudo ln -s /etc/sv/dbus /var/service
   # compiling suckless programs
