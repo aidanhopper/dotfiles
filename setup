@@ -19,6 +19,7 @@ setup_packages() {
         "curl"
         "base-devel"
         "xorg-minimal"
+        "xrdb"
         "feh"
         "libX11-devel"
         "libXft-devel"
@@ -70,7 +71,7 @@ setup_directories() {
     mkdir $HOME/Pictures
   fi
   if [ -L "$HOME/Downloads" ]; then
-    mkdir $HOME/Downloads
+    mkdir -p $HOME/Downloads
   fi
   # making nvim path so that nvim does create new folders in dotfiles
   mkdir $HOME/.local/share/nvim/site/pack/packer/start
@@ -79,9 +80,11 @@ setup_directories() {
   # neovim
   nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
   # picom
-  meson --buildtype=release $HOME/.local/share/picom
-  ninja -C $HOME/.local/share/picom/build
+  cd $HOME/.local/share/picom
+  meson --buildtype=release .
+  ninja -C build
   sudo mv $HOME/.local/share/picom/build/src/picom /usr/bin
+  cd $HOME/.dotfiles
   # pipewire
   sudo ln -s /etc/sv/dbus /var/service
   # compiling suckless programs
