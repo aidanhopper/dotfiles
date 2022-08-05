@@ -30,6 +30,13 @@ setup_packages() {
         "fzf"
         "bat"
         "stow"
+        "meson"
+        "cmake"
+        "libev-devel"
+        "xcb-util-renderutil-devel"
+        "xcb-util-image-devel"
+        "uthash"
+        "libconfig-devel"
       )
     ;;
     "arch") 
@@ -60,7 +67,7 @@ setup_directories() {
     mkdir $HOME/Downloads
   fi
   # creating symlinks
-  stow . 
+  sudo stow . 
 }
 
 setup_programs() {
@@ -74,11 +81,13 @@ setup_programs() {
   rm $HOME/.bash_logout
   rm $HOME/.bash_profile
   rm $HOME/.bashrc
-  # tmux
-  sudo git clone https://github.com/tmux-plugins/tpm $HOME/.config/tmux/plugins/tpm
   # neovim
-  git clone --depth 1 https://github.com/wbthomason/packer.nvim $HOME/.local/share/nvim/site/pack/packer/start/packer.nvim
+ git clone --depth 1 https://github.com/wbthomason/packer.nvim $HOME/.local/share/nvim/site/pack/packer/start/packer.nvim
   nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
+  # picom
+  meson --buildtype=release $HOME/.local/share/picom
+  ninja -C $HOME/.local/share/picom/build
+  sudo mv $HOME/.local/share/picom/build/src/picom /usr/bin
   # compiling suckless programs
   cd $HOME/.local/share/dwm
   sudo make clean install
@@ -90,6 +99,7 @@ setup_programs() {
   sudo make clean install
   # loading xresources
   xrdb $HOME/.Xresources
+  zsh
 }
 
 setup() {
