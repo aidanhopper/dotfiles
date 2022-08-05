@@ -71,20 +71,31 @@ setup_directories() {
     mkdir $HOME/Pictures
   fi
   if [ -L "$HOME/Downloads" ]; then
-    mkdir -p $HOME/Downloads
+    mkdir $HOME/Downloads
   fi
   # making nvim path so that nvim does create new folders in dotfiles
   mkdir $HOME/.local/share/nvim/site/pack/packer/start
+    # creating symlinks
+  sudo stow . 
+}
+
+setup_programs() {
+  # enabling scripts
+  chmod +x $HOME/.local/bin/*
+  # ZSH
+  chsh -s /usr/bin/zsh
+  source $HOME/.zshrc 
+  # removing bash
+  rm $HOME/.bash_history
+  rm $HOME/.bash_logout
   rm $HOME/.bash_profile
   rm $HOME/.bashrc
   # neovim
   nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
   # picom
-  cd $HOME/.local/share/picom
-  meson --buildtype=release .
-  ninja -C build
+  meson --buildtype=release $HOME/.local/share/picom
+  ninja -C $HOME/.local/share/picom/build
   sudo mv $HOME/.local/share/picom/build/src/picom /usr/bin
-  cd $HOME/.dotfiles
   # pipewire
   sudo ln -s /etc/sv/dbus /var/service
   # compiling suckless programs
