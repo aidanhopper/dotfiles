@@ -1,32 +1,38 @@
 # Succulent dotfiles
 
+Purpose of this repo is to make my setup portable.
+
 ## Included programs:
 
-- dwm
-- st
+- dwm 
+- st 
 - dmenu
 - dwmblocks
+- slock
 - neovim
 - zsh
 - picom
 - tmux
 - redshift
+- zathura
 
 ## How to use the setup script
+**NOTE**: Setup script is currently only compatible with Void Linux.
 
-NOTE: Setup script is currently only compatible with Void Linux
-
-1. Clone the repo
+1. Clone the repo.
 ```shell
-git clone --depth 1 https://github.com/aidanhopper/dotfiles --recurse-submodules .dotfiles
+git clone --depth 1 https://github.com/aidanhopper/dotfiles \
+--recurse-submodules .dotfiles
 ```
-2. Run the setup script
+2. Run the setup script.
 ```shell
 ./setup
 ```
 
 ## TODO: 
-- add Xresources support to neovim
-- make setup script posix compliant
-- add checks to setup script to not run redundant commands
-- add more distros to setup script
+- Add Xresources support to neovim.
+- Make new themes and theme switcher.
+- Add checks to setup script to not run redundant commands.
+- Add more distros to setup script.
+- Improve dwm keybinds.
+- Make autosetup script for glibc voidlinux iso with encrypted LUKS and separate home partition.
