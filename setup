@@ -27,6 +27,7 @@ setup_packages() {
         "freetype-devel"
         "fontconfig-devel"
         "harfbuzz-devel"
+        "libXrandr-devel"
         "fzf"
         "bat"
         "stow"
@@ -105,6 +106,8 @@ setup_programs() {
   cd $HOME/.local/share/dmenu
   sudo make clean install
   cd  $HOME/.local/share/st
+  sudo make clean install
+  cd  $HOME/.local/share/slock
   sudo make clean install
   # loading xresources
   xrdb $HOME/.Xresources
