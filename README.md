@@ -1,13 +1,18 @@
-## Assumes you are installing on void linux
+## Setup script only supports void linux currently
 
-#### Dependencies:
-
-- git
-- picom 
-- redshift
-- tmux
-- nvim 
-- fonts
+#### Included packages:
+- dwm
+- st
+- dmenu
+- dwmblocks
+- neovim
 - zsh
-- xorg meta package
-- stow
+- picom
+- tmux
+- redshift
+
+TODO: 
+- add Xresources support to neovim
+- make setup script posix compliant
+- add checks to setup script to not run redundant commands
+- add more distros to setup script
