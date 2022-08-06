@@ -31,3 +31,6 @@
 [submodule ".local/share/picom"]
 	path = .local/share/picom
 	url = https://github.com/yshui/picom
+[submodule ".local/share/slock"]
+	path = .local/share/slock
+	url = https://github.com/aidanhopper/slock
