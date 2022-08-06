@@ -2,9 +2,9 @@
 
 choise="$(echo 'logout\nsuspend\nshutdown' | dmenu)"
 case "$choise" in
-  "logout") cmd="pkill dwm"
+  "logout") cmd="pkill -KILL -u $(whoami)"
   ;;
-  "suspend") cmd="loginctl suspend"
+  "suspend") cmd="slock && loginctl suspend"
   ;;
   "shutdown") cmd="loginctl poweroff"
   ;;
