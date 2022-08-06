@@ -1,6 +1,8 @@
 *.alphast:0.85
 *.alphadm:0xB0
-*.font: JetBrainsMono-Nerd-Font:size=20
+*.font: JetBrainsMono Nerd Font:size=15
+*.dmenufont: JetBrainsMono Nerd Font:size=25
+
 
 !! nord:
 *.foreground: #e5e9f0
