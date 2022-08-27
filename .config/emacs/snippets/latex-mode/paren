@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: paren 
+# key: paren
+# --
+\\( $0 \\)

@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: table 
+# key: textable
+# --
+\begin{tablewrapper}
+\renewcommand{\arraystretch}{1.7}
+\begin{tabular}{$1}
+$0
+\end{tabular}
+\end{tablewrapper}

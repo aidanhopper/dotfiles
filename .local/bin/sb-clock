@@ -4,5 +4,5 @@ case $BUTTON in
 	6) st -e nvim "$0" ;;
 esac
 
-DATE="$(date '+%Y %b %d (%a)] [%H:%M')"
+DATE="$(date '+%Y %b %d (%a)][%H:%M')"
 echo "[$DATE]"

@@ -19,14 +19,11 @@ Purpose of this repo is to make my setup portable.
 ## How to use the setup script
 **NOTE**: Setup script is currently only compatible with Void Linux.
 
-1. Clone the repo.
+Command to run a setup script.
 ```shell
 git clone --depth 1 https://github.com/aidanhopper/dotfiles \
---recurse-submodules .dotfiles
-```
-2. Run the setup script.
-```shell
-./setup
+--recurse-submodules .dotfiles && chmox +x .dotfiles/setup \
+&& .dotfiles/setup
 ```
 
 ## TODO: 
@@ -35,4 +32,4 @@ git clone --depth 1 https://github.com/aidanhopper/dotfiles \
 - Add checks to setup script to not run redundant commands.
 - Add more distros to setup script.
 - Improve dwm keybinds.
-- Make autosetup script for glibc voidlinux iso with encrypted LUKS and separate home partition.
+- Make autosetup script for glibc Void Linux iso with encrypted LUKS and separate home partition.

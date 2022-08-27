@@ -1,18 +1,26 @@
 #!/bin/sh
 
+confirmation() {
+  confirm="$(echo 'yes\nno' | dmenu)"
+}
+
 choise="$(echo 'logout\nsuspend\nshutdown' | dmenu)"
 case "$choise" in
-  "logout") cmd="pkill -KILL -u $(whoami)"
+  "logout") 
+    cmd="pkill dwm"
+    confirmation
   ;;
-  "suspend") cmd="slock && loginctl suspend"
+  "suspend") 
+    cmd="loginctl suspend && slock"
+    confirmation
   ;;
-  "shutdown") cmd="loginctl poweroff"
+  "shutdown") 
+    cmd="loginctl poweroff"
+    confirmation
   ;;
 esac
 
-yayornay="$(echo 'yes\nno' | dmenu)"
-
-case "$yayornay" in
+case "$confirm" in
   "yes") eval $cmd
   ;;
 esac

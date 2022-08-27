@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 setup_packages() {
   # gets name of distro
@@ -6,90 +6,108 @@ setup_packages() {
   # gets install command from distro and distro specific package names
   case "$DISTRO" in
     "void") 
-      sudo xbps-install -Syu
+      # sudo xbps-install -Syu
       INSTALL_CMD="sudo xbps-install -y"
       # packages to install
-      PACKAGES=(
-        "firefox"
-        "font-awesome"
-        "nerd-fonts"
-        "neovim"
-        "tmux"
-        "zsh"
-        "redshift"
-        "curl"
-        "base-devel"
-        "xorg"
-        "feh"
-        "libX11-devel"
-        "libXft-devel"
-        "libXinerama-devel"
-        "freetype-devel"
-        "fontconfig-devel"
-        "harfbuzz-devel"
-        "libXrandr-devel"
-        "fzf"
-        "bat"
-        "stow"
-        "meson"
-        "cmake"
-        "libev-devel"
-        "xcb-util-renderutil-devel"
-        "xcb-util-image-devel"
-        "uthash"
-        "libconfig-devel"
-        "elogind"
-        "dbus"
-        "dbus-elogind"
-        "pipewire"
-        "pulsemixer"
-      )
+      set --                        \
+        "firefox"                   \
+        "font-awesome"              \
+        "nerd-fonts"                \
+        "neovim"                    \
+        "tmux"                      \
+        "zsh"                       \
+        "redshift"                  \
+        "curl"                      \
+        "base-devel"                \
+        "xorg"                      \
+        "feh"                       \
+        "libX11-devel"              \
+        "libXft-devel"              \
+        "libXinerama-devel"         \
+        "freetype-devel"            \
+        "fontconfig-devel"          \
+        "harfbuzz-devel"            \
+        "libXrandr-devel"           \
+        "fzf"                       \
+        "bat"                       \
+        "stow"                      \
+        "meson"                     \
+        "cmake"                     \
+        "libev-devel"               \
+        "xcb-util-renderutil-devel" \
+        "xcb-util-image-devel"      \
+        "uthash"                    \
+        "libconfig-devel"           \
+        "elogind"                   \
+        "dbus"                      \
+        "dbus-elogind"              \
+        "pandoc"                    \
+        "zathura"                   \
+        "zathura-pdf-poppler"       \
+        "texlive"                   \
+        "pipewire"                  \
+        "emacs-x11"                     \
+        "pulsemixer"                
     ;;
     "arch") 
       INSTALL_CMD="sudo pacman -S"
     ;;
   esac
-  for PACKAGE in ${PACKAGES[@]}; do
+  for PACKAGE in "$@" ; do
     eval "$INSTALL_CMD $PACKAGE" 
   done
 }
 
 setup_directories() {
   # makes the XDG dirs
-  if [ -L "$HOME/.config" ]; then
+  if [ ! -d "$HOME/.config" ]; then
     mkdir $HOME/.config
   fi
-  if [ -L "$HOME/.local" ]; then
+  if [ ! -d "$HOME/.local" ]; then
     mkdir $HOME/.local
   fi
-  if [ -L "$HOME/.cache" ]; then
+  if [ ! -d "$HOME/.cache" ]; then
     mkdir $HOME/.cache
   fi
   # make other home dirs
-  if [ -L "$HOME/Pictures" ]; then
+  if [ ! -d "$HOME/Pictures" ]; then
     mkdir $HOME/Pictures
   fi
-  if [ -L "$HOME/Downloads" ]; then
+  if [ ! -d "$HOME/Downloads" ]; then
     mkdir $HOME/Downloads
   fi
-  mkdir -p $HOME/.local/share/nvim/site/pack/packer/start
+  if [ ! -d "$HOME/.local/share/nvim/site/pack/packer/start" ]; then
+    mkdir -p $HOME/.local/share/nvim/site/pack/packer/start
+  fi
   # creating symlinks
   sudo stow . 
 }
 
 setup_programs() {
   # add dbus to runit
-  sudo ln -s /etc/sv/dbus /var/service
+  if [ ! -L "/var/service/dbus" ]; then
+    sudo ln -s /etc/sv/dbus /var/service
+  fi
   # enabling scripts
   chmod +x $HOME/.local/bin/*
   # ZSH
-  chsh -s /usr/bin/zsh
-  source $HOME/.zshrc 
+  if [ ! $SHELL = "/bin/zsh" ]; then
+    chsh -s /usr/bin/zsh
+    source $HOME/.zshrc 
+  fi
   # removing bash
-  rm $HOME/.bash_history
-  rm $HOME/.bash_logout
-  rm $HOME/.bash_profile
-  rm $HOME/.bashrc
+  if [ -f "$HOME/.bash_history" ]; then
+    rm $HOME/.bash_history
+  fi
+  if [ -f "$HOME/.bash_logout" ]; then
+    rm $HOME/.bash_logout
+  fi
+  if [ -f "$HOME/.bash_profile" ]; then
+    rm $HOME/.bash_profile
+  fi
+  if [ -f "$HOME/.bashrc" ]; then
+    rm $HOME/.bashrc
+  fi
   # neovim
   nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
   # picom
@@ -117,7 +135,9 @@ setup() {
   setup_packages
   setup_directories
   setup_programs
-  pkill -KILL -u $(whoami)
+  if [ $(pgrep dwm) = "" ]; then 
+    pkill -KILL -u $(whoami)
+  fi
 }
 
 setup
