@@ -60,7 +60,7 @@
     (load "profile.el"))
 
   (if (file-exists-p "~/.config/emacs/lisp/profile.el")
-    (lambda () (main/load-profile)))
+    ((lambda () (main/load-profile))))
 
 #+end_src
 
