@@ -25,6 +25,23 @@
 
 #+end_src
 
+* Tangle config
+#+begin_src emacs-lisp
+
+  (defun org-babel-tangle-config ()
+    (when (string-equal (buffer-file-name)
+      (expand-file-name "~/.dotfiles/.config/emacs/emacs.org"))
+    (let ((org-config-babel-evaluate nil))
+      (org-babel-tangle))))
+
+    (setup tangle-config
+      (:with-mode org-mode
+        (:hook (lambda ()
+                 (add-hook 'after-save-hook
+                           'org-babel-tangle-config)))))
+
+#+end_src
+
 * Profile.el
 ** Defaults
 #+begin_src emacs-lisp
@@ -100,23 +117,6 @@
 
 #+end_src
 
-* Tangle config
-#+begin_src emacs-lisp
-
-  (defun org-babel-tangle-config ()
-    (when (string-equal (buffer-file-name)
-      (expand-file-name "~/.dotfiles/.config/emacs/emacs.org"))
-    (let ((org-config-babel-evaluate nil))
-      (org-babel-tangle))))
-
-    (setup tangle-config
-      (:with-mode org-mode
-        (:hook (lambda ()
-                 (add-hook 'after-save-hook
-                           'org-babel-tangle-config)))))
-
-#+end_src
-
 * Packages
 ** General
 #+begin_src emacs-lisp
@@ -188,7 +188,8 @@
 ** Magit
 #+begin_src emacs-lisp
 
-  (setup (:package magit))
+  (setup (:package magit)
+    )
 
 #+end_src
 
@@ -224,7 +225,7 @@
 #+end_src
 
 ** Fzf
-*** fcd
+*** Fcd function
 #+begin_src emacs-lisp
 
   (defun fcd ()
@@ -293,9 +294,10 @@
 
 #+end_src
 
-**** LSP lang function
+**** LSP language function
+Call this function when setting up any language with LSP support.
 #+begin_src emacs-lisp
-
+  
   (defun main/lsp-lang-setup ()
     (company-mode)
     (tree-sitter-hl-mode)
@@ -404,7 +406,7 @@
 
   (setup latex
     (:option org-format-latex-options
-               (plist-put org-format-latex-options :scale 4.0)))
+               (plist-put org-format-latex-options :scale main/latex-scale)))
 
 #+end_src
 

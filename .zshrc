@@ -98,6 +98,7 @@ alias gp="git push"
 alias gc="git commit"
 alias ga="git add"
 alias gs="git status"
+alias emacsclient="emacsclient -n"
 
 # package manager aliases
 alias xq=xbps-query
