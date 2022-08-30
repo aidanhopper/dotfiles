@@ -55,12 +55,12 @@
 ** Load profile
 #+begin_src emacs-lisp
 
-  (defun load-profile ()
+  (defun main/load-profile ()
     (add-to-list 'load-path "~/.config/emacs/lisp")
     (load "profile.el"))
 
   (if (file-exists-p "~/.config/emacs/lisp/profile.el")
-    (lambda () (load-profile)))
+    (lambda () (main/load-profile)))
 
 #+end_src
 
