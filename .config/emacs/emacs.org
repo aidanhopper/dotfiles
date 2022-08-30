@@ -59,7 +59,7 @@
     (add-to-list 'load-path "~/.config/emacs/lisp")
     (load "profile.el"))
 
-  (if (file-directory-p "~/.config/emacs/lisp/profile.el")
+  (if (file-exists-p "~/.config/emacs/lisp/profile.el")
     (lambda () (load-profile)))
 
 #+end_src
