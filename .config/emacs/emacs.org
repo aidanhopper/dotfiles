@@ -46,9 +46,22 @@
 ** Defaults
 #+begin_src emacs-lisp
 
-  (defvar main/fixed-font-size 140)
-  (defvar main/variable-font-size 200)
-  (defvar main/latex-scale 4.0)
+  ; themes
+  (defvar profile/light-theme 'doom-nord-light)
+  (defvar profile/dark-theme 'doom-nord)
+
+  ; font size
+  (defvar profile/fixed-font-size 140)
+  (defvar profile/variable-font-size 200)
+
+  ; fonts
+  (defvar profile/fixed-font "JetBrainsMono Nerd Font")
+  (defvar profile/variable-font "ETBembo")
+
+  ;latex
+  (defvar profile/latex-scale 4.0)
+
+
 
 #+end_src
 
@@ -69,10 +82,10 @@
 #+begin_src emacs-lisp
 
   (defun main/set-fonts ()
-    (set-face-attribute 'default nil :font "JetBrainsMono Nerd Font" :height main/fixed-font-size)
-    (set-face-attribute 'fixed-pitch nil :font "JetBrainsMono Nerd Font" :height main/fixed-font-size)
-    (set-face-attribute 'variable-pitch nil :font "ETBembo" :height main/variable-font-size)
-    (setq default-frame-alist '((font . "JetBrainsMono Nerd Font"))))
+    (set-face-attribute 'default nil :font profile/fixed-font :height profile/fixed-font-size)
+    (set-face-attribute 'fixed-pitch nil :font profile/fixed-font :height profile/fixed-font-size)
+    (set-face-attribute 'variable-pitch nil :font profile/variable-font :height profile/variable-font-size)
+    (setq default-frame-alist '((font . profile/fixed-font))))
 
 #+end_src
 
@@ -107,7 +120,7 @@
     (:option vc-follow-symlinks t
              inhibit-startup-message t
              display-line-numbers-type 'relative package-enable-at-startup nil backup-by-copying t      ; don't clobber symlinks
-             backup-directory-alias '(("." . "$HOME/.cache/backups"))    ; don't litter my vs tree
+             backup-directory-alias '(("." . "~/.cache/backups"))    ; don't litter my vs tree
              backup-directory-alist '(("." . "~/.cache/backups"))
              delete-old-versions t
              kept-new-versions 6
@@ -150,7 +163,7 @@
 
 #+end_src
 
-** Minibuffer config
+** Mini-buffer
 #+begin_src emacs-lisp
 
   (setup (:package vertico orderless consult marginalia)
@@ -170,9 +183,16 @@
 ** Themes
 #+begin_src emacs-lisp
 
+  (defvar main/hour (string-to-number (format-time-string "%H")))
+
+  (defun main/theme-setup ()
+    (if (and (> main/hour 6) (< main/hour 20))
+        (load-theme profile/light-theme t)
+        (load-theme profile/dark-theme t)))
+
   (setup (:package all-the-icons doom-themes doom-modeline)
-         (load-theme 'doom-nord-light t)
-         (doom-modeline-mode 1))
+        (main/theme-setup)
+        (doom-modeline-mode 1))
 
 #+end_src
 
@@ -188,8 +208,7 @@
 ** Magit
 #+begin_src emacs-lisp
 
-  (setup (:package magit)
-    )
+  (setup (:package magit))
 
 #+end_src
 
@@ -225,7 +244,7 @@
 #+end_src
 
 ** Fzf
-*** Fcd function
+*** Fcd
 #+begin_src emacs-lisp
 
   (defun fcd ()
@@ -332,7 +351,8 @@ Call this function when setting up any language with LSP support.
 #+end_src
 
 * Org
-** Org setup
+** Basic org-mode setup
+*** Font and modes
 #+begin_src emacs-lisp
 
   (setq ispell-program-name "aspell")
@@ -354,25 +374,28 @@ Call this function when setting up any language with LSP support.
        (set-face-attribute 'org-table nil    :inherit '(shadow fixed-pitch))
        (set-face-attribute 'org-table nil    :inherit 'fixed-pitch))
 
-        (defun main/org-mode-setup ()
-          (org-indent-mode 1)
-          (flyspell-mode 1)
-          (show-paren-mode 1)
-          (yas-activate-extra-mode 'latex-mode)
-          (variable-pitch-mode 1)
-          (visual-fill-column-mode 1)
-          (visual-line-mode 1)
-          (org-display-inline-images)
-          (display-line-numbers-mode -1)
-          (org-bullets-mode 1)
-          (main/org-font-setup))
+  (defun main/org-mode-setup ()
+    (org-indent-mode 1)
+    (flyspell-mode 1)
+    (show-paren-mode 1)
+    (yas-activate-extra-mode 'latex-mode)
+    (variable-pitch-mode 1)
+    (visual-fill-column-mode 1)
+    (visual-line-mode 1)
+    (org-display-inline-images)
+    (display-line-numbers-mode -1)
+    (org-bullets-mode 1)
+    (main/org-font-setup))
+#+end_src
+
+*** Calling org setup
+#+begin_src emacs-lisp
 
   (setup (:package org visual-fill-column org-bullets)
     (:option ispell-program-name "aspell"
              image-use-external-converter t
              org-image-actual-width (/ (display-pixel-width) 5)
              org-preview-latex-image-directory "~/.config/emacs/ltximg/ltximg"
-             
              visual-fill-column-width 100
              visual-fill-column-center-text t
              org-startup-indented t
@@ -390,7 +413,7 @@ Call this function when setting up any language with LSP support.
 
 #+end_src
 
-** Org-babel
+*** Org-babel
 #+begin_src emacs-lisp
 
   (org-babel-do-load-languages
@@ -401,12 +424,27 @@ Call this function when setting up any language with LSP support.
 
 #+end_src
 
-** LaTeX
+*** LaTeX
 #+begin_src emacs-lisp
 
   (setup latex
     (:option org-format-latex-options
-               (plist-put org-format-latex-options :scale main/latex-scale)))
+               (plist-put org-format-latex-options :scale profile/latex-scale)))
+
+#+end_src
+
+*** Structure templates
+#+begin_src emacs-lisp
+
+  (with-eval-after-load 'org
+    ;; This is needed as of Org 9.2
+    (require 'org-tempo)
+      (add-to-list 'org-structure-template-alist '("clang" . "src C"))
+      (add-to-list 'org-structure-template-alist '("cpp" . "src C++"))
+      (add-to-list 'org-structure-template-alist '("la" . "src latex"))
+      (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
+      (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+      (add-to-list 'org-structure-template-alist '("py" . "src python")))
 
 #+end_src
 
@@ -434,6 +472,7 @@ Call this function when setting up any language with LSP support.
 #+end_src
 
 ** Org-present
+*** Startup hook
 #+begin_src emacs-lisp
 
   (defun main/org-present-hook ()
@@ -447,10 +486,20 @@ Call this function when setting up any language with LSP support.
         ;(org-block (:height 1.25) org-block)
     (setq header-line-format " "))
 
+#+end_src
+
+*** Quit hook
+#+begin_src emacs-lisp
+
   (defun main/org-present-quit-hook ()
     (setq header-line-format nil)
     (org-overview)
     (setq-local face-remapping-alist '((default variable-pitch default))))
+
+#+end_src
+
+*** Slide preparation
+#+begin_src emacs-lisp
 
   (defun main/org-present-prepare-slide ()
     (org-overview)
@@ -467,6 +516,11 @@ Call this function when setting up any language with LSP support.
     (org-present-prev)
     (main/org-present-prepare-slide))
 
+#+end_src
+
+*** Setup
+#+begin_src emacs-lisp
+
   (setup (:package org-present)
     (add-hook 'org-present-mode-hook 'main/org-present-hook)
     (add-hook 'org-present-mode-quit-hook 'main/org-present-quit-hook))
@@ -476,17 +530,3 @@ Call this function when setting up any language with LSP support.
 
 #+end_src
 
-** Structure templates
-#+begin_src emacs-lisp
-
-  (with-eval-after-load 'org
-    ;; This is needed as of Org 9.2
-    (require 'org-tempo)
-      (add-to-list 'org-structure-template-alist '("clang" . "src C"))
-      (add-to-list 'org-structure-template-alist '("cpp" . "src C++"))
-      (add-to-list 'org-structure-template-alist '("la" . "src latex"))
-      (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
-      (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
-      (add-to-list 'org-structure-template-alist '("py" . "src python")))
-
-#+end_src
