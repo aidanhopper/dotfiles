@@ -59,9 +59,7 @@
   (defvar profile/variable-font "ETBembo")
 
   ;latex
-  (defvar profile/latex-scale 4.0)
-
-
+  (defvar profile/latex-scale 3.0)
 
 #+end_src
 
@@ -131,7 +129,8 @@
 #+end_src
 
 * Packages
-** General
+** Keys
+*** General
 #+begin_src emacs-lisp
 
   (setup (:package general)
@@ -145,7 +144,7 @@
 
 #+end_src
 
-** Evil
+*** Evil
 #+begin_src emacs-lisp
 
   (setup (:package evil evil-collection evil-numbers)
@@ -160,6 +159,15 @@
     (main/leader-keys
         "j" '(evil-next-visual-line :which-key "next visual line")				    
         "k" '(evil-previous-visual-line :which-key "prev visual line")))
+
+#+end_src
+
+*** Which-key
+#+begin_src emacs-lisp
+
+  (setup (:package which-key)
+    (:option which-key-idle-delay 0.3)
+    (which-key-mode))
 
 #+end_src
 
@@ -193,15 +201,6 @@
   (setup (:package all-the-icons doom-themes doom-modeline)
         (main/theme-setup)
         (doom-modeline-mode 1))
-
-#+end_src
-
-** Which-key
-#+begin_src emacs-lisp
-
-  (setup (:package which-key)
-    (:option which-key-idle-delay 0.3)
-    (which-key-mode))
 
 #+end_src
 
@@ -288,7 +287,8 @@
 #+begin_src emacs-lisp
 
   (setup (:package tree-sitter tree-sitter-langs)
-    (:option global-tree-sitter-mode t))
+    (:option global-tree-sitter-mode 1)
+    (set-face-attribute 'tree-sitter-hl-face:punctuation nil :inherit 'fixed-pitch))
 
 #+end_src
 
@@ -316,10 +316,10 @@
 **** LSP language function
 Call this function when setting up any language with LSP support.
 #+begin_src emacs-lisp
-  
+
   (defun main/lsp-lang-setup ()
-    (company-mode)
-    (tree-sitter-hl-mode)
+    (company-mode 1)
+    (tree-sitter-hl-mode 1)
     (lsp-deferred))
 
 #+end_src
@@ -363,11 +363,12 @@ Call this function when setting up any language with LSP support.
                         (org-level-2 . 1.2)
                         (org-level-3 . 1.1)
                         (org-level-4 . 1.0)
-                        (org-level-5 . 1.0) (org-level-6 . 1.0)
+                        (org-level-5 . 1.0)
+                        (org-level-6 . 1.0)
                         (org-level-7 . 1.0)
                         (org-level-8 . 1.0)
                         (org-document-title . 2.0)))
-          (set-face-attribute (car face) nil :font "ETBembo" :weight 'regular :height (cdr face)))
+          (set-face-attribute (car face) nil :font profile/variable-font :weight 'regular :height (cdr face)))
        (set-face-attribute 'org-indent nil :inherit '(org-hide fixed-pitch))
        (set-face-attribute 'org-block nil    :foreground nil :inherit 'fixed-pitch)
        (set-face-attribute 'org-code nil :inherit '(shadow fixed-pitch))
@@ -386,6 +387,7 @@ Call this function when setting up any language with LSP support.
     (display-line-numbers-mode -1)
     (org-bullets-mode 1)
     (main/org-font-setup))
+
 #+end_src
 
 *** Calling org setup
