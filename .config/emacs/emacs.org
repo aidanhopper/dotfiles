@@ -30,15 +30,15 @@
 
   (defun org-babel-tangle-config ()
     (when (string-equal (buffer-file-name)
-      (expand-file-name "~/.dotfiles/.config/emacs/emacs.org"))
-    (let ((org-config-babel-evaluate nil))
-      (org-babel-tangle))))
+                        (expand-file-name "~/.dotfiles/.config/emacs/emacs.org"))
+      (let ((org-config-babel-evaluate nil))
+        (org-babel-tangle))))
 
-    (setup tangle-config
-      (:with-mode org-mode
-        (:hook (lambda ()
-                 (add-hook 'after-save-hook
-                           'org-babel-tangle-config)))))
+  (setup tangle-config
+    (:with-mode org-mode
+      (:hook (lambda ()
+               (add-hook 'after-save-hook
+                         'org-babel-tangle-config)))))
 
 #+end_src
 
@@ -66,12 +66,11 @@
 ** Load profile
 #+begin_src emacs-lisp
 
-  (defun main/load-profile ()
-    (add-to-list 'load-path "~/.config/emacs/lisp")
-    (load "profile.el"))
 
   (if (file-exists-p "~/.config/emacs/lisp/profile.el")
-    ((lambda () (main/load-profile))))
+    (progn
+      (add-to-list 'load-path "~/.config/emacs/lisp")
+      (load "profile.el")))
 
 #+end_src
 
@@ -121,6 +120,8 @@
              backup-directory-alias '(("." . "~/.cache/backups"))    ; don't litter my vs tree
              backup-directory-alist '(("." . "~/.cache/backups"))
              delete-old-versions t
+             scroll-conservatively 10
+             scroll-margin 7
              kept-new-versions 6
              kept-old-versions 2
              version-control t)
@@ -140,10 +141,9 @@
       :prefix "SPC"
       :global-prefix "C-SPC")
     (main/leader-keys
-       "w" '(save-buffer :which-key "save")))
+      "w" '(save-buffer :which-key "save")))
 
 #+end_src
-
 *** Evil
 #+begin_src emacs-lisp
 
@@ -157,8 +157,8 @@
     (evil-define-key '(normal visual) 'global (kbd "g C-a") 'evil-numbers/inc-at-pt-incremental)
     (evil-define-key '(normal visual) 'global (kbd "g C-x") 'evil-numbers/dec-at-pt-incremental)
     (main/leader-keys
-        "j" '(evil-next-visual-line :which-key "next visual line")				    
-        "k" '(evil-previous-visual-line :which-key "prev visual line")))
+      "j" '(evil-next-visual-line :which-key "next visual line")
+      "k" '(evil-previous-visual-line :which-key "prev visual line")))
 
 #+end_src
 
@@ -176,11 +176,11 @@
 
   (setup (:package vertico orderless consult marginalia)
     (:option completion-styles '(orderless basic)
-              completion-category-defaults nil
-              completion-category-overrides
-              '((file (styles partial-completion)))
-              marginalia-annotators '(marginalia-annotators-heavy
-                                      marginalia-annotators-light nil))
+             completion-category-defaults nil
+             completion-category-overrides
+             '((file (styles partial-completion)))
+             marginalia-annotators '(marginalia-annotators-heavy
+                                     marginalia-annotators-light nil))
     (marginalia-mode 1)
     (vertico-mode 1)
     (main/leader-keys
@@ -196,11 +196,11 @@
   (defun main/theme-setup ()
     (if (and (> main/hour 6) (< main/hour 20))
         (load-theme profile/light-theme t)
-        (load-theme profile/dark-theme t)))
+      (load-theme profile/dark-theme t)))
 
   (setup (:package all-the-icons doom-themes doom-modeline)
-        (main/theme-setup)
-        (doom-modeline-mode 1))
+    (main/theme-setup)
+    (doom-modeline-mode 1))
 
 #+end_src
 
@@ -236,9 +236,9 @@
   (setup (:package vterm)
     (:bind "C-c s v" vterm-vertical-split)
     (:when-loaded
-     (progn
-       (setq vterm-max-scrollback 10000)
-       (advice-add 'evil-collection-vterm-insert :before #'vterm-reset-cursor-point))))
+      (progn
+        (setq vterm-max-scrollback 10000)
+        (advice-add 'evil-collection-vterm-insert :before #'vterm-reset-cursor-point))))
 
 #+end_src
 
@@ -270,19 +270,11 @@
     (tab-bar-mode 1)
     (:option tab-bar-show 1)
     (main/leader-keys
-    "t" '(tab-bar-new-tab :which-key "create new tab")))
+     "t" '(tab-bar-new-tab :which-key "create new tab")))
 
 #+end_src
 
 ** Development
-*** Auto-pairs
-#+begin_src emacs-lisp
-
-  (setup electric-pair-local
-    (:hook-into prog-mode))
-
-#+end_src
-
 *** Tree-sitter
 #+begin_src emacs-lisp
 
@@ -309,6 +301,7 @@
   (setup (:package lsp-mode lsp-ui company)
     (:option lsp-ui-sideline-show-diagnostics t
              lsp-ui-sideline-show-hover t
+             ;company-minimum-prefix-length 1
              lsp-ui-sideline-show-code-actions t))
 
 #+end_src
@@ -319,6 +312,7 @@ Call this function when setting up any language with LSP support.
 
   (defun main/lsp-lang-setup ()
     (company-mode 1)
+    (electric-pair-local-mode 1)
     (tree-sitter-hl-mode 1)
     (lsp-deferred))
 
@@ -331,7 +325,25 @@ Call this function when setting up any language with LSP support.
 
 #+end_src
 
+*** Parinfer
+#+begin_src emacs-lisp
+
+  (setup (:package parinfer-rust-mode)
+    (:option parinfer-rust-dim-parens nil))
+
+#+end_src
+
 *** Languages 
+**** Emacs lisp
+#+begin_src emacs-lisp
+
+  (setup elisp
+    (:with-mode emacs-lisp-mode
+      (:hook (lambda () (flymake-mode 1)
+                        (parinfer-rust-mode 1)))))
+
+#+end_src
+
 **** Python
 #+begin_src emacs-lisp
 
@@ -356,24 +368,25 @@ Call this function when setting up any language with LSP support.
 #+begin_src emacs-lisp
 
   (setq ispell-program-name "aspell")
-    (setenv "PATH" (shell-command-to-string "echo -n $PATH"))
-      (defun main/org-font-setup ()
-        ;; Set faces for heading levels
-        (dolist (face '((org-level-1 . 1.5)
-                        (org-level-2 . 1.2)
-                        (org-level-3 . 1.1)
-                        (org-level-4 . 1.0)
-                        (org-level-5 . 1.0)
-                        (org-level-6 . 1.0)
-                        (org-level-7 . 1.0)
-                        (org-level-8 . 1.0)
-                        (org-document-title . 2.0)))
-          (set-face-attribute (car face) nil :font profile/variable-font :weight 'regular :height (cdr face)))
-       (set-face-attribute 'org-indent nil :inherit '(org-hide fixed-pitch))
-       (set-face-attribute 'org-block nil    :foreground nil :inherit 'fixed-pitch)
-       (set-face-attribute 'org-code nil :inherit '(shadow fixed-pitch))
-       (set-face-attribute 'org-table nil    :inherit '(shadow fixed-pitch))
-       (set-face-attribute 'org-table nil    :inherit 'fixed-pitch))
+  (setenv "PATH" (shell-command-to-string "echo -n $PATH"))
+  (defun main/org-font-setup ()
+    ;; Set faces for heading levels
+    (dolist (face '((org-level-1 . 1.5)
+                    (org-level-2 . 1.2)
+                    (org-level-3 . 1.1)
+                    (org-level-4 . 1.0)
+                    (org-level-5 . 1.0)
+                    (org-level-6 . 1.0)
+                    (org-level-7 . 1.0)
+                    (org-level-8 . 1.0)
+                    (org-document-title . 2.0)))
+      (set-face-attribute (car face) nil :font profile/variable-font :weight 'regular :height (cdr face)))
+    (set-face-attribute 'org-indent nil :inherit '(org-hide fixed-pitch))
+    (set-face-attribute 'org-block nil    :foreground nil :inherit 'fixed-pitch)
+    (set-face-attribute 'org-code nil :inherit '(shadow fixed-pitch))
+    (set-face-attribute 'org-table nil    :inherit '(shadow fixed-pitch))
+    (set-face-attribute 'org-verbatim nil    :inherit 'fixed-pitch)
+    (set-face-attribute 'org-table nil    :inherit 'fixed-pitch))
 
   (defun main/org-mode-setup ()
     (org-indent-mode 1)
@@ -422,7 +435,10 @@ Call this function when setting up any language with LSP support.
    'org-babel-load-languages
    '((emacs-lisp . t)
      (C . t)
-     (latex . t)))
+     (latex . t)
+     (python . t)))
+
+  (setq org-confirm-babel-evaluate nil)
 
 #+end_src
 
@@ -441,12 +457,12 @@ Call this function when setting up any language with LSP support.
   (with-eval-after-load 'org
     ;; This is needed as of Org 9.2
     (require 'org-tempo)
-      (add-to-list 'org-structure-template-alist '("clang" . "src C"))
-      (add-to-list 'org-structure-template-alist '("cpp" . "src C++"))
-      (add-to-list 'org-structure-template-alist '("la" . "src latex"))
-      (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
-      (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
-      (add-to-list 'org-structure-template-alist '("py" . "src python")))
+    (add-to-list 'org-structure-template-alist '("clang" . "src C"))
+    (add-to-list 'org-structure-template-alist '("cpp" . "src C++"))
+    (add-to-list 'org-structure-template-alist '("la" . "src latex"))
+    (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
+    (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+    (add-to-list 'org-structure-template-alist '("python" . "src python")))
 
 #+end_src
 
@@ -458,12 +474,12 @@ Call this function when setting up any language with LSP support.
     :custom
     (org-roam-directory (file-truename "~/Dropbox/notes/"))
     :bind (("C-c n l" . org-roam-buffer-toggle)
-              ("C-c n f" . org-roam-node-find)
-              ("C-c n g" . org-roam-graph)
-              ("C-c n i" . org-roam-node-insert)
-              ("C-c n c" . org-roam-capture)
-              ;; Dailies
-              ("C-c n j" . org-roam-dailies-capture-today))
+           ("C-c n f" . org-roam-node-find)
+           ("C-c n g" . org-roam-graph)
+           ("C-c n i" . org-roam-node-insert)
+           ("C-c n c" . org-roam-capture)
+           ;; Dailies
+           ("C-c n j" . org-roam-dailies-capture-today))
     :config
     ;; If you're using a vertical completion framework, you might want a more informative completion interface
     (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
@@ -479,10 +495,10 @@ Call this function when setting up any language with LSP support.
 
   (defun main/org-present-hook ()
     (setq-local face-remapping-alist '(
-        (default (:height 1.5) variable-pitch)
-        (header-line (:height 4.5) variable-pitch)
-        (org-document-title (:height 1.75) org-document-title)
-        (org-document-info (:height 1.5) org-document-info)))
+                                       (default (:height 1.5) variable-pitch)
+                                       (header-line (:height 4.5) variable-pitch)
+                                       (org-document-title (:height 1.75) org-document-title)
+                                       (org-document-info (:height 1.5) org-document-info)))
         ;(org-code (:height 1.55) org-code)
         ;(org-verbatim (:height 1.55) org-verbatim)
         ;(org-block (:height 1.25) org-block)
@@ -531,4 +547,7 @@ Call this function when setting up any language with LSP support.
   (evil-define-key '(normal visual) 'global (kbd "C-c C-k") 'main/org-present-prev)
 
 #+end_src
+
+
+
 
