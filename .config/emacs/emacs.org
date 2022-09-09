@@ -144,6 +144,7 @@
       "w" '(save-buffer :which-key "save")))
 
 #+end_src
+
 *** Evil
 #+begin_src emacs-lisp
 
@@ -204,6 +205,15 @@
 
 #+end_src
 
+** Doc view
+#+begin_src emacs-lisp
+
+  (setup doc-view-mode
+    (:option doc-view-resolution 300)
+    (:hook (lambda () (doc-view-fit-height-to-window))))
+
+#+end_src
+
 ** Magit
 #+begin_src emacs-lisp
 
@@ -219,12 +229,18 @@
 #+end_src
 
 ** Terminal
-*** Split function
+*** Split functions
 #+begin_src emacs-lisp
 
   (defun vterm-vertical-split () 
     (interactive)
     (split-window-horizontally)
+    (other-window 1)
+    (vterm))
+
+  (defun vterm-split () 
+    (interactive)
+    (split-window-vertically)
     (other-window 1)
     (vterm))
 
@@ -260,6 +276,13 @@
     (main/leader-keys
       "ff" '(fcd :which-key "fzf files in home dir")
       "fg" '(projectile-find-file :which-key "fzf files in current dir")))
+
+#+end_src
+
+** Plot
+#+begin_src emacs-lisp
+
+  (setup (:package gnuplot))
 
 #+end_src
 
@@ -436,6 +459,7 @@ Call this function when setting up any language with LSP support.
    '((emacs-lisp . t)
      (C . t)
      (latex . t)
+     (gnuplot . t)
      (python . t)))
 
   (setq org-confirm-babel-evaluate nil)
@@ -459,6 +483,7 @@ Call this function when setting up any language with LSP support.
     (require 'org-tempo)
     (add-to-list 'org-structure-template-alist '("clang" . "src C"))
     (add-to-list 'org-structure-template-alist '("cpp" . "src C++"))
+    (add-to-list 'org-structure-template-alist '("gnuplot" . "src gnuplot"))
     (add-to-list 'org-structure-template-alist '("la" . "src latex"))
     (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
     (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
@@ -547,7 +572,6 @@ Call this function when setting up any language with LSP support.
   (evil-define-key '(normal visual) 'global (kbd "C-c C-k") 'main/org-present-prev)
 
 #+end_src
-
 
 
 
