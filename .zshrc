@@ -2,7 +2,11 @@
 ENABLE_CORRECTION="false"
 
 # Useful functions
-fcd () cd "$(find $HOME -type d | fzf --preview 'tree {}')"
+fcd () cd {
+  "$(find $HOME -type d | fzf --preview 'tree {}')"
+}
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib64
 
 # Term enviroment var
 TERMINAL=st
@@ -19,9 +23,15 @@ export XDG_DATA_HOME=$HOME/.local/share
 export XDG_CACHE_HOME=$HOME/.cache
 export XDG_CONFIG_HOME=$HOME/.config
 
+# Rust stuff
+export RUSTUP_HOME=$XDG_DATA_HOME/rustup
+export CARGO_HOME=$XDG_DATA_HOME/cargo
+
 # Setting PATH vars 
 export PATH=/usr/local/bin:$PATH
 export PATH=$HOME/.local/bin:$PATH
+export PATH=$CARGO_HOME/bin:$PATH
+export PATH=$RUSTUP_HOME/toolchains/nightly-x86_64-unknown-linux-gnu/bin:$PATH
 # export PATH=$HOME/.dotfiles/.local/bin/statusbar:$PATH
 
 # Setting app specfic paths
@@ -74,7 +84,7 @@ cursor_mode() {
   zle -N zle-keymap-select
   zle -N zle-line-init
 }
-cursor_mode
+#cursor_mode
 
 # Edit line in vim with ctrl-e:
 autoload edit-command-line; zle -N edit-command-line
@@ -90,7 +100,6 @@ alias spending=slocksuspend
 alias sus=slocksuspend
 alias nvidia-settings="nvidia-settings --config='$XDG_CONFIG_HOME/nvidia/settings'"
 alias x=startx
-alias cat=bat
 alias ls="ls --color"
 
 # git aliases

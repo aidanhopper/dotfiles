@@ -1,7 +1,7 @@
-#+TITLE: Emacs Config
-#+AUTHOR: Aidan Hopper
-#+PROPERTY: header-args:emacs-lisp :tangle ~/.config/emacs/init.el :results none
-#+STARTUP: overview
+#+title: Emacs Config
+#+author: Aidan Hopper
+#+property: header-args:emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+startup: overview
 
 * Package.el and setup macro
 #+begin_src emacs-lisp
@@ -47,7 +47,7 @@
 #+begin_src emacs-lisp
 
   ; themes
-  (defvar profile/light-theme 'doom-nord-light)
+  (defvar profile/light-theme 'doom-flatwhite)
   (defvar profile/dark-theme 'doom-nord)
 
   ; font size
@@ -60,6 +60,9 @@
 
   ;latex
   (defvar profile/latex-scale 3.0)
+
+  ;opacity
+  (defmacro profile/opacity 100)
 
 #+end_src
 
@@ -91,6 +94,7 @@
 
   (defun main/disable-line-numbers-mode ()
     (add-hook 'term-mode-hook (lambda () (display-line-numbers-mode -1)))
+    (add-hook 'neotree-mode-hook (lambda () (display-line-numbers-mode -1)))
     (add-hook 'help-mode-hook (lambda () (display-line-numbers-mode -1)))
     (add-hook 'vterm-mode-hook (lambda () (display-line-numbers-mode -1))))
 
@@ -100,6 +104,7 @@
 #+begin_src emacs-lisp
 
   (defun main/startup ()
+   (set-frame-parameter (selected-frame) 'alpha 85)
    (menu-bar-mode -1)
    (tool-bar-mode -1)
    (scroll-bar-mode -1)
@@ -119,6 +124,7 @@
              display-line-numbers-type 'relative package-enable-at-startup nil backup-by-copying t      ; don't clobber symlinks
              backup-directory-alias '(("." . "~/.cache/backups"))    ; don't litter my vs tree
              backup-directory-alist '(("." . "~/.cache/backups"))
+             frame-resize-pixelwise t
              delete-old-versions t
              scroll-conservatively 10
              scroll-margin 7
@@ -157,6 +163,7 @@
     (evil-define-key '(normal visual) 'global (kbd "C-a C-x") 'evil-numbers/dec-at-pt)
     (evil-define-key '(normal visual) 'global (kbd "g C-a") 'evil-numbers/inc-at-pt-incremental)
     (evil-define-key '(normal visual) 'global (kbd "g C-x") 'evil-numbers/dec-at-pt-incremental)
+    (evil-define-key '(normal visual) 'global (kbd "C-u") 'evil-scroll-up)
     (main/leader-keys
       "j" '(evil-next-visual-line :which-key "next visual line")
       "k" '(evil-previous-visual-line :which-key "prev visual line")))
@@ -258,6 +265,13 @@
 
 #+end_src
 
+** Neotree
+#+begin_src emacs-lisp
+
+  (setup (:package neotree))
+
+#+end_src
+
 ** Fzf
 *** Fcd
 #+begin_src emacs-lisp
@@ -274,7 +288,7 @@
   (setup (:package fzf)
     (setenv "FZF_DEFAULT_COMMAND" "find -type f")
     (main/leader-keys
-      "ff" '(fcd :which-key "fzf files in home dir")
+      "pf" '(fcd :which-key "fzf files in home dir")
       "fg" '(projectile-find-file :which-key "fzf files in current dir")))
 
 #+end_src
@@ -283,6 +297,15 @@
 #+begin_src emacs-lisp
 
   (setup (:package gnuplot))
+
+#+end_src
+
+** Environment variables
+#+begin_src emacs-lisp
+
+  (setup (:package exec-path-from-shell)
+    (exec-path-from-shell-copy-env "RUSTUP_HOME")
+    (exec-path-from-shell-copy-env "CARGO_HOME"))
 
 #+end_src
 
@@ -385,6 +408,24 @@ Call this function when setting up any language with LSP support.
 
 #+end_src
 
+**** Rust
+#+begin_src emacs-lisp
+
+  (setup (:package rustic)
+    (:hook (lambda () (main/lsp-lang-setup))))
+
+#+end_src
+
+**** JavaScript
+#+begin_src emacs-lisp
+
+  (setup (:package js2-mode tide)
+    (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+    (:hook (lambda () (main/lsp-lang-setup)
+                      (tide-setup))))
+
+#+end_src
+
 * Org
 ** Basic org-mode setup
 *** Font and modes
@@ -469,7 +510,7 @@ Call this function when setting up any language with LSP support.
 *** LaTeX
 #+begin_src emacs-lisp
 
-  (setup latex
+  (setup 
     (:option org-format-latex-options
                (plist-put org-format-latex-options :scale profile/latex-scale)))
 
@@ -491,26 +532,87 @@ Call this function when setting up any language with LSP support.
 
 #+end_src
 
+** Agenda
+#+begin_src emacs-lisp
+
+  (setq org-agenda-files (directory-files-recursively "~/Notes" "\\.org$"))
+  (setup (:package org-super-agenda))
+  (require 'org-super-agenda)
+ (let ((org-super-agenda-groups
+       '(;; Each group has an implicit boolean OR operator between its selectors.
+         (:name "Today"  ; Optionally specify section name
+                :time-grid t  ; Items that appear on the time grid
+                :todo "TODAY")  ; Items that have this TODO keyword
+         (:name "Important"
+                ;; Single arguments given alone
+                :tag "bills"
+                :priority "A")
+         ;; Set order of multiple groups at once
+         (:order-multi (2 (:name "Shopping in town"
+                                 ;; Boolean AND group matches items that match all subgroups
+                                 :and (:tag "shopping" :tag "@town"))
+                          (:name "Food-related"
+                                 ;; Multiple args given in list with implicit OR
+                                 :tag ("food" "dinner"))
+                          (:name "Personal"
+                                 :habit t
+                                 :tag "personal")
+                          (:name "Space-related (non-moon-or-planet-related)"
+                                 ;; Regexps match case-insensitively on the entire entry
+                                 :and (:regexp ("space" "NASA")
+                                               ;; Boolean NOT also has implicit OR between selectors
+                                               :not (:regexp "moon" :tag "planet")))))
+         ;; Groups supply their own section names when none are given
+         (:todo "WAITING" :order 8)  ; Set order of this section
+         (:todo ("SOMEDAY" "TO-READ" "CHECK" "TO-WATCH" "WATCHING")
+                ;; Show this group at the end of the agenda (since it has the
+                ;; highest number). If you specified this group last, items
+                ;; with these todo keywords that e.g. have priority A would be
+                ;; displayed in that group instead, because items are grouped
+                ;; out in the order the groups are listed.
+                :order 9)
+         (:priority<= "B"
+                      ;; Show this section after "Today" and "Important", because
+                      ;; their order is unspecified, defaulting to 0. Sections
+                      ;; are displayed lowest-number-first.
+                      :order 1)
+         ;; After the last group, the agenda will display items that didn't
+         ;; match any of these groups, with the default order position of 99
+         )))
+  (org-agenda nil "a")) (org-super-agenda-mode 1)
+
+#+end_src
+
 ** Org-roam
 #+begin_src emacs-lisp
 
-  (use-package org-roam
-    :ensure t
-    :custom
-    (org-roam-directory (file-truename "~/Dropbox/notes/"))
-    :bind (("C-c n l" . org-roam-buffer-toggle)
-           ("C-c n f" . org-roam-node-find)
-           ("C-c n g" . org-roam-graph)
-           ("C-c n i" . org-roam-node-insert)
-           ("C-c n c" . org-roam-capture)
-           ;; Dailies
-           ("C-c n j" . org-roam-dailies-capture-today))
-    :config
-    ;; If you're using a vertical completion framework, you might want a more informative completion interface
-    (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
-    (org-roam-db-autosync-mode)
-    ;; If using org-roam-protocol
-    (require 'org-roam-protocol))
+    (use-package org-roam
+      :ensure t
+      :custom
+      (org-roam-directory (file-truename "~/Notes/roam/"))
+      :bind (("C-c n l" . org-roam-buffer-toggle)
+             ("C-c n f" . org-roam-node-find)
+             ("C-c n g" . org-roam-graph)
+             ("C-c n i" . org-roam-node-insert)
+             ("C-c n c" . org-roam-capture)
+             ;; Dailies
+             ("C-c n j" . org-roam-dailies-capture-today))
+      :config
+      ;; If you're using a vertical completion framework, you might want a more informative completion interface
+      (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+      (org-roam-db-autosync-mode)
+      ;; If using org-roam-protocol
+      (require 'org-roam-protocol))
+
+    (setup (:package org-roam-ui)
+      :config
+    (setq org-roam-ui-sync-theme t
+          org-roam-ui-follow t
+          org-roam-ui-update-on-save t
+          org-roam-ui-open-on-start t))
+
+    (setup (:package consult-org-roam))
+  (consult org-roam-mode 1)
 
 #+end_src
 
@@ -572,6 +674,5 @@ Call this function when setting up any language with LSP support.
   (evil-define-key '(normal visual) 'global (kbd "C-c C-k") 'main/org-present-prev)
 
 #+end_src
-
 
 
