@@ -2,8 +2,8 @@
 ENABLE_CORRECTION="false"
 
 # Useful functions
-fcd () cd {
-  "$(find $HOME -type d | fzf --preview 'tree {}')"
+fcd () {
+  cd "$(find $HOME -type d | fzf --preview 'tree {}')"
 }
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib64
@@ -113,4 +113,5 @@ alias emacsclient="emacsclient -n"
 alias xq=xbps-query
 alias xi="sudo xbps-install"
 alias xr="sudo xbps-remove"
-cd
+
+bindkey -s '^f' "tmux-sessionizer\n"
