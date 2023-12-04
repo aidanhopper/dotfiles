@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+selected=$(find $HOME/Projects/ $HOME/.dotfiles/.config $HOME/.dotfiles/.local -mindepth 1 -maxdepth 1 -type d | sed "s|$HOME|~|g" | fzf)
+selected=$(echo $selected | sed "s|~|$HOME|g")
+
+session=$(basename $selected)
+
+tmux_running=$(pgrep tmux)
+
+if [[ -z $TMUX ]] && [[ -z $tmux_running ]]; then
+  tmux new-session -s $session -c $selected 
+  exit 0
+fi
+
+if ! tmux has-session -t=$session 2> /dev/null; then
+  tmux new-session -ds $session -c $selected
+fi
+
+if [[ -z $TMUX ]]; then
+    tmux attach -t $session
+else
+    tmux switch-client -t $session
+fi

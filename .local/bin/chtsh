@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+if [[ ! $TMUX ]]; then
+  exit 0
+fi
+
+selected=$(cat ~/.dotfiles/.chtsh-queries | fzf)
+
+if [[ -z $selected ]]; then
+  exit 0
+fi
+
+tmux neww bash -c "curl -s cht.sh/$selected | less -R"
