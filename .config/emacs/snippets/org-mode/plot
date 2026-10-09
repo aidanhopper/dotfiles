@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# name: plot
-# key: <plot
-# --
-#+begin_src gnuplot :exports code :file images/graphs/${1:file}
-  $0
-#+end_src

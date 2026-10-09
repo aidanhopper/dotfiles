@@ -1,23 +1,34 @@
 #!/usr/bin/env bash
 
-selected=$(find $HOME/Projects/ $HOME/.dotfiles/.config $HOME/.dotfiles/.local -mindepth 1 -maxdepth 1 -type d | sed "s|$HOME|~|g" | fzf)
-selected=$(echo $selected | sed "s|~|$HOME|g")
+selected=$(
+  {
+    echo -e "~\n~/dotfiles"
+    find "$HOME/Projects" "$HOME/.dotfiles/.config" "$HOME/.dotfiles/.local" \
+      -mindepth 1 -maxdepth 1 -type d 2>/dev/null \
+      | sed "s|^$HOME|~|"
+  } | fzf
+)
 
-session=$(basename $selected)
+# Bail out if fzf was cancelled (Esc / Ctrl-C)
+[[ -z $selected ]] && exit 0
 
-tmux_running=$(pgrep tmux)
-
-if [[ -z $TMUX ]] && [[ -z $tmux_running ]]; then
-  tmux new-session -s $session -c $selected 
-  exit 0
+# "~" is tmux's marked-pane target, so use a lookalike character instead
+if [[ $selected == "~" ]]; then
+  session="∼"
+else
+  # tmux silently converts "." and ":" in session names to "_"
+  session=$(basename "$selected" | tr '.:' '__')
 fi
 
-if ! tmux has-session -t=$session 2> /dev/null; then
-  tmux new-session -ds $session -c $selected
+# Expand the leading ~ back to $HOME for the working directory
+selected="${selected/#\~/$HOME}"
+
+if ! tmux has-session -t="$session" 2>/dev/null; then
+  tmux new-session -ds "$session" -c "$selected"
 fi
 
 if [[ -z $TMUX ]]; then
-    tmux attach -t $session
+  tmux attach -t "$session"
 else
-    tmux switch-client -t $session
+  tmux switch-client -t "$session"
 fi
