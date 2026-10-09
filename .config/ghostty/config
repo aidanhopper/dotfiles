@@ -42,9 +42,9 @@
 # # Just for example:
 # resize-overlay-duration = 4s 200ms
 
-# theme = onehalflight
-# theme = onehalfdark
-theme = dark:onehalfdark,light:onehalflight
+# theme = One Half Light
+# theme = One Half Dark
+theme = dark:One Half Dark,light:One Half Light
 macos-option-as-alt = true
 keybind = alt+l=text:\x1bl
 
