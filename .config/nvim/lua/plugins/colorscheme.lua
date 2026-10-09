@@ -7,6 +7,15 @@ local function get_system_theme_sync()
     if res.code == 0 and (res.stdout or ""):match("Dark") then
       return "dark"
     end
+    -- Fallback to osascript because modern macOS does not always maintain AppleInterfaceStyle in defaults
+    local osa = vim.system({
+      "osascript",
+      "-e",
+      'tell application "System Events" to tell appearance preferences to get dark mode',
+    }, { text = true }):wait()
+    if osa.code == 0 and (osa.stdout or ""):match("true") then
+      return "dark"
+    end
     return "light"
   elseif vim.fn.has("unix") == 1 then
     if vim.fn.executable("gsettings") == 1 then
@@ -33,8 +42,19 @@ end
 local function query_system_theme_async(callback)
   if vim.fn.has("mac") == 1 or vim.fn.has("macunix") == 1 then
     vim.system({ "defaults", "read", "-g", "AppleInterfaceStyle" }, { text = true }, function(res)
-      local mode = (res.code == 0 and (res.stdout or ""):match("Dark")) and "dark" or "light"
-      callback(mode)
+      if res.code == 0 and (res.stdout or ""):match("Dark") then
+        callback("dark")
+        return
+      end
+      -- Fallback to osascript if defaults does not indicate Dark
+      vim.system({
+        "osascript",
+        "-e",
+        'tell application "System Events" to tell appearance preferences to get dark mode',
+      }, { text = true }, function(osa_res)
+        local is_dark = osa_res.code == 0 and (osa_res.stdout or ""):match("true") ~= nil
+        callback(is_dark and "dark" or "light")
+      end)
     end)
   elseif vim.fn.has("unix") == 1 then
     if vim.fn.executable("gsettings") == 1 then
