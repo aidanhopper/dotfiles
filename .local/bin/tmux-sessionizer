@@ -3,7 +3,7 @@
 selected=$(
   {
     echo -e "~\n~/dotfiles"
-    find "$HOME/Projects" "$HOME/.dotfiles/.config" "$HOME/.dotfiles/.local" \
+    find "$HOME/Projects" "$HOME/dotfiles/.config" "$HOME/dotfiles/.local" \
       -mindepth 1 -maxdepth 1 -type d 2>/dev/null \
       | sed "s|^$HOME|~|"
   } | fzf
