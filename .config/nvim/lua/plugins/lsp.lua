@@ -22,23 +22,26 @@ return {
         },
       })
 
-      local lspconfig = require("lspconfig")
       local capabilities = require("blink.cmp").get_lsp_capabilities()
 
-      local on_attach = function(_, bufnr)
-        local nmap = function(keys, func, desc)
-          vim.keymap.set("n", keys, func, { buffer = bufnr, desc = "LSP: " .. desc })
-        end
+      vim.api.nvim_create_autocmd("LspAttach", {
+        group = vim.api.nvim_create_augroup("lsp-attach", { clear = true }),
+        callback = function(event)
+          local bufnr = event.buf
+          local nmap = function(keys, func, desc)
+            vim.keymap.set("n", keys, func, { buffer = bufnr, desc = "LSP: " .. desc })
+          end
 
-        nmap("K", vim.lsp.buf.hover, "Hover Documentation")
-        nmap("gd", vim.lsp.buf.definition, "Go to Definition")
-        nmap("gD", vim.lsp.buf.references, "Go to References")
-        nmap("gi", vim.lsp.buf.implementation, "Go to Implementation")
-        nmap("gt", vim.lsp.buf.type_definition, "Go to Type Definition")
-        nmap("gr", vim.lsp.buf.references, "Go to References")
-        nmap("<leader>rn", vim.lsp.buf.rename, "Rename Symbol")
-        nmap("<leader>ca", vim.lsp.buf.code_action, "Code Action")
-      end
+          nmap("K", vim.lsp.buf.hover, "Hover Documentation")
+          nmap("gd", vim.lsp.buf.definition, "Go to Definition")
+          nmap("gD", vim.lsp.buf.references, "Go to References")
+          nmap("gi", vim.lsp.buf.implementation, "Go to Implementation")
+          nmap("gt", vim.lsp.buf.type_definition, "Go to Type Definition")
+          nmap("gr", vim.lsp.buf.references, "Go to References")
+          nmap("<leader>rn", vim.lsp.buf.rename, "Rename Symbol")
+          nmap("<leader>ca", vim.lsp.buf.code_action, "Code Action")
+        end,
+      })
 
       -- Pure ASCII diagnostic appearance (no dots, circles, or unicode characters)
       vim.diagnostic.config({
@@ -85,19 +88,11 @@ return {
       local servers = {
         ruff = {},
         pyright = {
-          root_dir = function(fname)
-            local match = vim.fs.find({ ".venv", ".git", "pyproject.toml", "setup.py", "requirements.txt", ".envrc" }, {
-              path = fname,
-              upward = true,
-            })[1]
-            if match then
-              return vim.fs.dirname(match)
-            end
-            return vim.fn.getcwd()
-          end,
+          root_markers = { ".venv", ".git", "pyproject.toml", "setup.py", "requirements.txt", ".envrc" },
           before_init = function(_, config)
             local root = config.root_dir or vim.fn.getcwd()
             local py = get_python_path(root)
+            config.settings = config.settings or {}
             config.settings.python = config.settings.python or {}
             config.settings.python.pythonPath = py
             local venv = vim.fs.find(".venv", { path = root, upward = true, type = "directory" })[1]
@@ -105,14 +100,22 @@ return {
               config.settings.python.venvPath = vim.fs.dirname(venv)
               config.settings.python.venv = vim.fs.basename(venv)
             end
+            config.settings.python.analysis = vim.tbl_deep_extend("force", config.settings.python.analysis or {}, {
+              typeCheckingMode = "off",
+            })
           end,
+          handlers = {
+            -- Pyright is used purely for language intelligence (completion, hover, definitions);
+            -- Ruff handles all linting and diagnostics.
+            ["textDocument/publishDiagnostics"] = function() end,
+          },
           settings = {
             python = {
               analysis = {
                 autoSearchPaths = true,
                 useLibraryCodeForTypes = true,
                 diagnosticMode = "openFilesOnly",
-                typeCheckingMode = "off", -- Ruff handles Python linting
+                typeCheckingMode = "off",
               },
             },
           },
@@ -150,16 +153,16 @@ return {
         servers.gopls = {}
       end
 
+      -- Configure servers using Neovim 0.11+ native vim.lsp.config & vim.lsp.enable
+      for server_name, server_opts in pairs(servers) do
+        server_opts.capabilities = vim.tbl_deep_extend("force", capabilities, server_opts.capabilities or {})
+        vim.lsp.config(server_name, server_opts)
+        vim.lsp.enable(server_name)
+      end
+
       require("mason-lspconfig").setup({
         ensure_installed = vim.tbl_keys(servers),
-        handlers = {
-          function(server_name)
-            local server_opts = servers[server_name] or {}
-            server_opts.capabilities = capabilities
-            server_opts.on_attach = on_attach
-            lspconfig[server_name].setup(server_opts)
-          end,
-        },
+        automatic_enable = false,
       })
     end,
   },

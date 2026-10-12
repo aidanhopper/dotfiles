@@ -28,7 +28,7 @@ return {
       local lint = require("lint")
 
       lint.linters_by_ft = {
-        python = { "ruff" },
+        -- Python linting is handled directly by ruff LSP in lsp.lua
         javascript = { "eslint_d" },
         typescript = { "eslint_d" },
         go = { "golangcilint" },

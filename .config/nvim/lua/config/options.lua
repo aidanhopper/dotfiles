@@ -9,6 +9,7 @@ opt.laststatus = 2      -- Always display standard statusline
 opt.showmode = true     -- Display -- INSERT --, -- VISUAL -- etc.
 opt.ruler = true        -- Show line and column number of the cursor position
 opt.signcolumn = "yes"  -- Keep signcolumn open so text doesn't shift for diagnostics
+opt.showtabline = 0     -- Never display tabs at the top of the editor
 
 -- Cursor and visual guides
 opt.cursorline = true   -- Highlight current line
@@ -50,15 +51,17 @@ opt.clipboard = "unnamedplus" -- Sync with system clipboard
 opt.undofile = true     -- Persistent undo history across sessions
 opt.swapfile = false    -- Disable swap files
 opt.updatetime = 250    -- Faster completion and diagnostic updates
-opt.timeoutlen = 300    -- Wait time for mapped sequences
+opt.timeoutlen = 1000   -- Wait time for mapped sequences before timing out
 
 -- Colors
 opt.termguicolors = true
 
--- Python provider (points to dedicated provider venv with pynvim & jupyter)
-local py3_path = vim.fn.expand("~/.local/share/nvim/venv/bin/python")
+-- Python provider (dedicated environment for Neovim remote plugins & Molten)
+local py3_path = vim.fn.expand("~/.local/share/nvim/molten-venv/bin/python")
 if vim.fn.executable(py3_path) == 1 then
   vim.g.python3_host_prog = py3_path
+elseif vim.fn.executable(vim.fn.expand("~/.local/share/nvim/venv/bin/python")) == 1 then
+  vim.g.python3_host_prog = vim.fn.expand("~/.local/share/nvim/venv/bin/python")
 end
 
 -- Netrw (built-in file explorer) vi styling
